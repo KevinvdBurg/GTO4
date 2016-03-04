@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     public int BuildingPoints;
     public int Money;
     public bool HisTurn;
+    public bool onStartPos = false;
 
 
     // Use this for initialization
@@ -19,5 +20,11 @@ public class Player : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public override string ToString()
+    {
+        return "Name: " + Name + ", MovementPoints: " + MovementPoints + ", BuildingPoints: " + BuildingPoints +
+               ", Money: " + Money + ", HisTurn: " + HisTurn;
     }
 }
