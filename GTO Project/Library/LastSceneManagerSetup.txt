@@ -1,4 +1,4 @@
 sceneSetups:
-- path: C:/Users/Gebruiker/Documents/GitHub/GDB4/GDB4 - the pizza game/Assets/VR.unity
+- path: Assets/_Scenes/MainScene.unity
   isLoaded: 1
   isActive: 1

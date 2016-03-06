@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 {
 
     public Camera MainCamera;
-    private int width = 15; //can be public 
-    private int height = 22; //can be public 
+    public int width = 15;
+    public int height = 22;
     private int cellsize = 4; //can be public 
     public static GameManager instance;
 
@@ -23,16 +23,7 @@ public class GameManager : MonoBehaviour
     private Player EvilPlayer;
     public List<Player> PlayerList;
     public GameObject theGrid;
-
-    private float mousex;
-    private float mousey;
-    private Vector3 mouseposition;
-
-    bool one_click;
-    float timer_for_double_click;
-    Vector3 target;
-    float speed;
-    private double delay = 0;
+    public List<GameObject> Tiles; 
 
     // Use this for initialization
     void Start () {
@@ -96,7 +87,6 @@ public class GameManager : MonoBehaviour
 
     void GenGrid()
     {
-
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -121,7 +111,6 @@ public class GameManager : MonoBehaviour
                     }
                         
                 }
-
             }
         }
     }
@@ -129,7 +118,7 @@ public class GameManager : MonoBehaviour
     void GridBlock(int i, int j, Player player)
     {
         Tile newTile = tilePrefab.GetComponent<Tile>();
-        newTile.ID = Convert.ToInt32((i + "" + j));
+        newTile.ID = new int[2] {i,j};
         newTile.Player = player;
         newTile.isShadow = false;
         
@@ -149,6 +138,7 @@ public class GameManager : MonoBehaviour
         newTile.transform.localScale = new Vector3(cellsize, cellsize, cellsize);
 
         GameObject gp = (GameObject)Instantiate(tilePrefab, new Vector3((i * cellsize) / 2, (j * cellsize) / 2, 0), Quaternion.identity);
+        Tiles.Add(gp);
         gp.transform.parent = theGrid.transform;
 
     }
@@ -161,6 +151,8 @@ public class GameManager : MonoBehaviour
             return EvilPlayer;
         return null;
     }
+
+    
 
 
 
