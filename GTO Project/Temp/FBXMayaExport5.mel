@@ -1,0 +1,23 @@
+print "Starting maya loading and fbx conversion \n";
+	
+if (`file -q -exists "/Users/kvdb/Documents/Codes/GTO4/GTO Project/Assets/Models/Dumpster.mb"`)
+{		
+	file -o "/Users/kvdb/Documents/Codes/GTO4/GTO Project/Assets/Models/Dumpster.mb";
+	FBXExportEmbeddedTextures -v false;
+	// FBXExportHardEdges -v true;
+	FBXExportApplyConstantKeyReducer -v false;
+	FBXExportShowUI -v false;
+
+	print "Before fbx export\n";
+	FBXExport -f "/Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/ExportedFBXFile.fbx";
+	print "after fbx export\n";
+}
+else
+	print "Could not open Maya file.";
+
+
+system ("rm \"/Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/CommandPipe\"");
+
+$donepipeKill = `fopen "/Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/SyncPipeKill" "w"`;
+fwrite $donepipeKill "Done";
+fclose $donepipeKill;

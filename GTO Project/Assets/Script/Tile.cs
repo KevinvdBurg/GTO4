@@ -7,14 +7,14 @@ using Assets;
 public class Tile : MonoBehaviour
 {
 
-    public int[] ID; //0 = coll, 1 row 
+	public Vector2 ID; //0 = coll, 1 row 
     public Player Player; //owner
     public bool isShadow;
 
-    public int[] up;
-    public int[] down;
-    public int[] left;
-    public int[] right;
+	public Vector2 up;
+	public Vector2 down;
+	public Vector2 left;
+	public Vector2 right;
 
 
     // Use this for initialization
@@ -40,13 +40,13 @@ public class Tile : MonoBehaviour
         
     }
 
-    void getNeighbor()
-    {
-        up = new int[2] { ID[0] , (ID[1] + 1) };
-        down = new int[2] { ID[0], (ID[1] - 1) };
-        left = new int[2] { (ID[0] - 1), ID[1] };
-        right = new int[2] { (ID[0] + 1), ID[1] };
-    }
+	void getNeighbor()
+	{
+		up = new Vector2 ( ID.x , (ID.y + 1));
+		down = new Vector2 ( ID.x, (ID.y - 1) );
+		left = new Vector2 ( (ID.x - 1), ID.y );
+		right = new Vector2 ( (ID.x + 1), ID.y ) ;
+	}
 
     
 }

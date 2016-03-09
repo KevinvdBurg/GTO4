@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public Camera MainCamera;
     public int width = 15;
     public int height = 22;
-    private int cellsize = 4; //can be public 
+    private static int cellsize = 4; //can be public 
     public static GameManager instance;
 
     public GameObject tilePrefab;
@@ -96,8 +96,9 @@ public class GameManager : MonoBehaviour
                     GridBlock(i, j, GoodPlayer);
                     if (!GoodPlayer.onStartPos)
                     {
-                        GOGoodPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
+                        //GOGoodPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
                         GoodPlayer.onStartPos = true;
+						GoodPlayer.setLocation (new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2));
                     }
 
                 }
@@ -106,8 +107,9 @@ public class GameManager : MonoBehaviour
                     GridBlock(i, j, EvilPlayer);
                     if (!EvilPlayer.onStartPos)
                     {
-                        GOEvilPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
+                        //GOEvilPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
                         EvilPlayer.onStartPos = true;
+						EvilPlayer.setLocation (new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2));
                     }
                         
                 }
@@ -118,7 +120,8 @@ public class GameManager : MonoBehaviour
     void GridBlock(int i, int j, Player player)
     {
         Tile newTile = tilePrefab.GetComponent<Tile>();
-        newTile.ID = new int[2] {i,j};
+        //newTile.ID = new int[2] {i,j};
+		newTile.ID = new Vector2 (j, i);
         newTile.Player = player;
         newTile.isShadow = false;
         
@@ -151,6 +154,10 @@ public class GameManager : MonoBehaviour
             return EvilPlayer;
         return null;
     }
+
+	public int getCellsize(){
+		return cellsize;
+	}
 
     
 
