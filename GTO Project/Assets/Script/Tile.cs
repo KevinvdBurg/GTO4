@@ -12,21 +12,10 @@ public class Tile : MonoBehaviour
     public Player Player; //owner
     public bool IsShadow;
 
-	public Vector2 Up;
-	public Vector2 Down;
-	public Vector2 Left;
-	public Vector2 Right;
-
-	public string UpOwner;
-	public string DownOwner;
-	public string LeftOwner;
-	public string RightOwner;
-
-
     // Use this for initialization
     void Start()
     {
-        GetNeighbor();
+        //GetNeighbor();
 
     }
 
@@ -50,14 +39,6 @@ public class Tile : MonoBehaviour
 	public Player getPlayer()
 	{
 		return Player;
-	}
-
-	void GetNeighbor()
-	{
-		Up = new Vector2 ( Id.x , (Id.y + 1));
-		Down = new Vector2 ( Id.x, (Id.y - 1) );
-		Left = new Vector2 ( (Id.x - 1), Id.y );
-		Right = new Vector2 ( (Id.x + 1), Id.y ) ;
 	}
 
 	public void OnMouseUp(){

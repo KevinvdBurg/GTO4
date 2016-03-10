@@ -99,8 +99,8 @@ public class GameManager : MonoBehaviour
                     if (!_goodPlayer.OnStartPos)
                     {
                         //GOGoodPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
-                        _goodPlayer.OnStartPos = true;
 						_goodPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
+						_goodPlayer.OnStartPos = true;
                     }
 
                 }
@@ -110,8 +110,9 @@ public class GameManager : MonoBehaviour
                     if (!_evilPlayer.OnStartPos)
                     {
                         //GOEvilPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
-                        _evilPlayer.OnStartPos = true;
+                        
 						_evilPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
+						_evilPlayer.OnStartPos = true;
                     }
                         
                 }
@@ -127,7 +128,7 @@ public class GameManager : MonoBehaviour
     {
         Tile newTile = tilePrefab.GetComponent<Tile>();
         //newTile.ID = new int[2] {i,j};
-		newTile.Id = new Vector2 (j, i);
+		newTile.Id = new Vector2 ((i * Cellsize) / 2, (j * Cellsize) / 2);
         newTile.Player = player;
         newTile.IsShadow = false;
         

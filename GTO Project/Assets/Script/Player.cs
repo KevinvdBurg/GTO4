@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Player : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class Player : MonoBehaviour
     public bool HisTurn;
     public bool OnStartPos = false;
 
-	private Vector3 _currentLocation;
+	public Vector3 _currentLocation;
 
 	public Vector2 Up;
 	public Vector2 Down;
@@ -35,24 +36,27 @@ public class Player : MonoBehaviour
         {
 			if (Input.GetKeyUp (KeyCode.A)) {
 				Debug.Log("Pressing A - " + Name);
-				if(this.Name == GetNeighborOwner(Left))
-					setLocation (new Vector3 (Left.x, Left.y, -2));
-				
+				Vector3 newPos = GetMoveToTile ("left");
+				if(this.Name == GetNeighborOwner(newPos))
+					setLocation (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
 				Debug.Log("Pressing W - " + Name);
-				if(this.Name == GetNeighborOwner(Up))
-					setLocation (new Vector3 (Up.x, Up.y, -2));
+				Vector3 newPos = GetMoveToTile ("up");
+				if(this.Name == GetNeighborOwner(newPos))
+					setLocation (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
 				Debug.Log("Pressing S - " + Name);
-				if(this.Name == GetNeighborOwner(Down))
-					setLocation (new Vector3 (Down.x, Down.y, -2));
+				Vector3 newPos = GetMoveToTile ("down");
+				if(this.Name == GetNeighborOwner(newPos))
+					setLocation (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.D)) {
 				Debug.Log ("Pressing D - " + Name);
-				if(this.Name == GetNeighborOwner(Right))
-					setLocation (new Vector3 (Right.x, Right.y, -2));
+				Vector3 newPos = GetMoveToTile ("right");
+				if(this.Name == GetNeighborOwner(newPos))
+					setLocation (newPos);
 			}
 				
         }
@@ -72,28 +76,11 @@ public class Player : MonoBehaviour
 //        //CurrentLocation = new int[2] { (int) this.transform.position.y, (int)this.transform.position.x};
 //    }
 
-	void GetNeighbor()
-	{
-		Up = new Vector2 ( _currentLocation.x , (_currentLocation.y + 1));
-		Down = new Vector2 ( _currentLocation.x, (_currentLocation.y - 1) );
-		Left = new Vector2 ( (_currentLocation.x - 1), _currentLocation.y );
-		Right = new Vector2 ( (_currentLocation.x + 1), _currentLocation.y );
-	}
 
-
-
-	public bool setLocation(Vector3 newLocation)
+	public void setLocation(Vector3 newLocation)
 	{
 		_currentLocation = newLocation;
 		this.transform.position = newLocation;
-		if (this.transform.position == CheckBehind ()) {
-			GetNeighbor ();
-			return true;
-		} else {
-			return false;
-		}
-
-
 	}
 
 	Vector2 CheckBehind()
@@ -107,7 +94,8 @@ public class Player : MonoBehaviour
 
 		if (Physics.Raycast (transform.position, -back, out hit, 4)) {
 			Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
-			return hit.collider.gameObject.GetComponent<Tile> ().Id;
+			Vector2 TileID = hit.collider.gameObject.GetComponent<Tile> ().Id;
+			return TileID;
 		} else {
 			return Vector2.zero;
 		}
@@ -115,18 +103,55 @@ public class Player : MonoBehaviour
 
 	public string GetNeighborOwner(Vector2 moveTo)
 	{
-		List<GameObject> Tl = GameManager.instance.GetTiles ();
+		List<GameObject> Tl = GameManager.instance.GetTiles();
+
+		//Vector2 search = moveTo;
+		//GameObject result = Tl.Single(s => s.GetComponent<Tile> ().Id.Equals(search));
+
 		foreach (GameObject i in Tl) {
 			Tile it = i.GetComponent<Tile> ();
-		    Debug.Log(moveTo + " > " + it.Id);
-			if (it.Id == moveTo)
-				return it.Player.Name;
+			//Debug.Log ("Searching" + moveTo);
+			//Debug.Log ("Searching: " + it.Id + " - " + moveTo);
 
+			if (it.Id == moveTo) {
+				Debug.Log ("FOUND!: " + it.Id + " - " + it.Player.Name);
+				return it.Player.Name; 
+				//Debug.Log (it.Id + " - " + it.Player.Name);
+			}
+			
 		}
 		return "Unknown";
 
 		//return Tl.Find(obj => obj.GetComponent<Tile>().ID == moveTo).GetComponent<Tile> ().player.Name;
 
+	}
+
+	Vector3 GetMoveToTile (string move)
+	{
+		Vector3 moveToVector = new Vector2 ();
+		moveToVector.z = -2;
+		if (move == "up") {
+			moveToVector.x = _currentLocation.x;
+			moveToVector.y = _currentLocation.y + 2;
+				return moveToVector;
+		} else if (move == "down") {
+			moveToVector.x = _currentLocation.x;
+			moveToVector.y = _currentLocation.y - 2;
+			return moveToVector;
+		} else if (move == "left") {
+			moveToVector.x = _currentLocation.x - 2;
+			moveToVector.y = _currentLocation.y;
+			return moveToVector;
+		} else if (move == "right") {
+			moveToVector.x = _currentLocation.x + 2;
+			moveToVector.y = _currentLocation.y;
+			return moveToVector;
+		} else {
+			Debug.Log ("Not a good move");
+			moveToVector.x = _currentLocation.x;
+			moveToVector.y = _currentLocation.y;
+			return moveToVector;
+		}
 	}
 
 
