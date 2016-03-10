@@ -115,6 +115,10 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+
+//		foreach (GameObject item in Tiles) {
+//			item.GetComponent<Tile> ().getNeighborOwners ();
+//		}
     }
 
     void GridBlock(int i, int j, Player player)
@@ -122,7 +126,7 @@ public class GameManager : MonoBehaviour
         Tile newTile = tilePrefab.GetComponent<Tile>();
         //newTile.ID = new int[2] {i,j};
 		newTile.ID = new Vector2 (j, i);
-        newTile.Player = player;
+        newTile.player = player;
         newTile.isShadow = false;
         
         if (player.Name == "Good")
@@ -158,6 +162,11 @@ public class GameManager : MonoBehaviour
 	public int getCellsize(){
 		return cellsize;
 	}
+
+	public List<GameObject> getTiles(){
+		return Tiles;
+	}
+		
 
     
 

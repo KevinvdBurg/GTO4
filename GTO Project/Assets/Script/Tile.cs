@@ -2,13 +2,14 @@
 using UnityEngine;
 using System.Collections;
 using Assets;
+using System.Collections.Generic;
 
 
 public class Tile : MonoBehaviour
 {
 
 	public Vector2 ID; //0 = coll, 1 row 
-    public Player Player; //owner
+    public Player player; //owner
     public bool isShadow;
 
 	public Vector2 up;
@@ -16,11 +17,17 @@ public class Tile : MonoBehaviour
 	public Vector2 left;
 	public Vector2 right;
 
+	public string upOwner;
+	public string downOwner;
+	public string leftOwner;
+	public string rightOwner;
+
 
     // Use this for initialization
     void Start()
     {
         getNeighbor();
+
     }
 
     // Update is called once per frame
@@ -37,8 +44,13 @@ public class Tile : MonoBehaviour
 
     void setPlayer(Player player)
     {
-        
+		this.player = player;   
     }
+
+	public Player getPlayer()
+	{
+		return player;
+	}
 
 	void getNeighbor()
 	{
@@ -47,6 +59,15 @@ public class Tile : MonoBehaviour
 		left = new Vector2 ( (ID.x - 1), ID.y );
 		right = new Vector2 ( (ID.x + 1), ID.y ) ;
 	}
+
+	public void OnMouseUp(){
+		onPClick ();
+	}
+
+	public void onPClick(){
+		this.GetComponent<SpriteRenderer>().color = GameColor.Error;
+	}
+
 
     
 }
