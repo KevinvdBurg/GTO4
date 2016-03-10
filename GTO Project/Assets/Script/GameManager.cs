@@ -9,33 +9,35 @@ using Object = UnityEngine.Object;
 public class GameManager : MonoBehaviour
 {
 
+    private const int Width = 15;
+    private const int Height = 22;
+    private const int Cellsize = 4;
+
     public Camera MainCamera;
-    public int width = 15;
-    public int height = 22;
-    private static int cellsize = 4; //can be public 
+
     public static GameManager instance;
 
     public GameObject tilePrefab;
 
-    public GameObject GOGoodPlayer;
-    public GameObject GOEvilPlayer;
-    private Player GoodPlayer;
-    private Player EvilPlayer;
+    public GameObject GoGoodPlayer;
+    public GameObject GoEvilPlayer;
+    private Player _goodPlayer;
+    private Player _evilPlayer;
     public List<Player> PlayerList;
-    public GameObject theGrid;
+    public GameObject TheGrid;
     public List<GameObject> Tiles; 
 
     // Use this for initialization
     void Start () {
         instance = this;
        
-        GoodPlayer = GOGoodPlayer.GetComponent<Player>();
-        EvilPlayer = GOEvilPlayer.GetComponent<Player>();
-        PlayerList.Add(GoodPlayer);
-        PlayerList.Add(EvilPlayer);
+        _goodPlayer = GoGoodPlayer.GetComponent<Player>();
+        _evilPlayer = GoEvilPlayer.GetComponent<Player>();
+        PlayerList.Add(_goodPlayer);
+        PlayerList.Add(_evilPlayer);
 
-        float camX = ((width * cellsize) /4) ;
-        float camy = ((height * cellsize) /4);
+        float camX = ((Width * Cellsize) /4) ;
+        float camy = ((Height * Cellsize) /4);
         MainCamera.transform.localPosition = new Vector3(camX, camy, -25);
         GenGrid();
     }
@@ -87,29 +89,29 @@ public class GameManager : MonoBehaviour
 
     void GenGrid()
     {
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < Width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < Height; j++)
             {
-                if (j >= (height/2))
+                if (j >= (Height/2))
                 {
-                    GridBlock(i, j, GoodPlayer);
-                    if (!GoodPlayer.onStartPos)
+                    GridBlock(i, j, _goodPlayer);
+                    if (!_goodPlayer.OnStartPos)
                     {
                         //GOGoodPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
-                        GoodPlayer.onStartPos = true;
-						GoodPlayer.setLocation (new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2));
+                        _goodPlayer.OnStartPos = true;
+						_goodPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
                     }
 
                 }
                 else
                 {
-                    GridBlock(i, j, EvilPlayer);
-                    if (!EvilPlayer.onStartPos)
+                    GridBlock(i, j, _evilPlayer);
+                    if (!_evilPlayer.OnStartPos)
                     {
                         //GOEvilPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
-                        EvilPlayer.onStartPos = true;
-						EvilPlayer.setLocation (new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2));
+                        _evilPlayer.OnStartPos = true;
+						_evilPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
                     }
                         
                 }
@@ -125,9 +127,9 @@ public class GameManager : MonoBehaviour
     {
         Tile newTile = tilePrefab.GetComponent<Tile>();
         //newTile.ID = new int[2] {i,j};
-		newTile.ID = new Vector2 (j, i);
-        newTile.player = player;
-        newTile.isShadow = false;
+		newTile.Id = new Vector2 (j, i);
+        newTile.Player = player;
+        newTile.IsShadow = false;
         
         if (player.Name == "Good")
         {
@@ -142,28 +144,28 @@ public class GameManager : MonoBehaviour
             newTile.GetComponent<SpriteRenderer>().color = GameColor.Error;
         }
 
-        newTile.transform.localScale = new Vector3(cellsize, cellsize, cellsize);
+        newTile.transform.localScale = new Vector3(Cellsize, Cellsize, Cellsize);
 
-        GameObject gp = (GameObject)Instantiate(tilePrefab, new Vector3((i * cellsize) / 2, (j * cellsize) / 2, 0), Quaternion.identity);
+        GameObject gp = (GameObject)Instantiate(tilePrefab, new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, 0), Quaternion.identity);
         Tiles.Add(gp);
-        gp.transform.parent = theGrid.transform;
+        gp.transform.SetParent(TheGrid.transform);
 
     }
 
-    public Player getPlayer(string name)
+    public Player GetPlayer(string name)
     {
-        if (GoodPlayer.name == name)
-            return GoodPlayer;
-        else if (EvilPlayer.name == name)
-            return EvilPlayer;
+        if (_goodPlayer.name == name)
+            return _goodPlayer;
+        else if (_evilPlayer.name == name)
+            return _evilPlayer;
         return null;
     }
 
-	public int getCellsize(){
-		return cellsize;
+	public int GetCellsize(){
+		return Cellsize;
 	}
 
-	public List<GameObject> getTiles(){
+	public List<GameObject> GetTiles(){
 		return Tiles;
 	}
 		

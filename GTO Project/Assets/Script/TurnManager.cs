@@ -9,8 +9,8 @@ public class TurnManager : MonoBehaviour {
     //Houd Actie Punten / Bouw Punten / Geld bij ( Zowel verhogen als verlagen)
     //Roteer camara na buurt
 
-    public UIManager ui;
-    private List<Player> Players = new List<Player>(2);
+	public UIManager UIManager ;
+    private List<Player> _players = new List<Player>(2);
 
     // Use this for initialization
     void Start ()
@@ -22,7 +22,7 @@ public class TurnManager : MonoBehaviour {
 	void Update () {
 	    if (Input.GetKeyDown("f"))
 	    {
-	        EndTurn(getPlayerTurn(true));
+	        EndTurn(GetPlayerTurn(true));
 	    }
 	}
 
@@ -33,15 +33,15 @@ public class TurnManager : MonoBehaviour {
 
     void UpdateUI(Player updateUiPlayer)
     {
-        ui.MP.text = updateUiPlayer.MovementPoints + "";
-        ui.BP.text = updateUiPlayer.BuildingPoints + "";
-        ui.GP.text = updateUiPlayer.Money + "";
+		UIManager.MP.text = updateUiPlayer.MovementPoints + "";
+		UIManager.BP.text = updateUiPlayer.BuildingPoints + "";
+		UIManager.GP.text = updateUiPlayer.Money + "";
     }
 
     void StartTurn(Player playerThatStartedTurn)
     {
         playerThatStartedTurn.HisTurn = true;
-        ui.TurnIndicator.text = playerThatStartedTurn.Name;
+		UIManager.TurnIndicator.text = playerThatStartedTurn.Name;
         UpdateUI(playerThatStartedTurn);
     }
     
@@ -52,14 +52,14 @@ public class TurnManager : MonoBehaviour {
         playerThatEndedTurn.MovementPoints += 5;
         playerThatEndedTurn.HisTurn = false;
 
-        StartTurn(getPlayerTurn(false));
+        StartTurn(GetPlayerTurn(false));
 
     }
 
-    Player getPlayerTurn(bool turn)
+    Player GetPlayerTurn(bool turn)
     {
         Player TurnPlayer = null;
-        foreach (Player player in Players)
+        foreach (Player player in _players)
         {
             if (player.HisTurn == turn)
                 TurnPlayer =  player;

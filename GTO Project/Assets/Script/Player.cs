@@ -8,23 +8,23 @@ public class Player : MonoBehaviour
     public int BuildingPoints;
     public int Money;
     public bool HisTurn;
-    public bool onStartPos = false;
+    public bool OnStartPos = false;
 
-	private Vector3 CurrentLocation;
+	private Vector3 _currentLocation;
 
-	public Vector2 up;
-	public Vector2 down;
-	public Vector2 left;
-	public Vector2 right;
+	public Vector2 Up;
+	public Vector2 Down;
+	public Vector2 Left;
+	public Vector2 Right;
 
 
 
-	private int currentCellSize;
+	private int _currentCellSize;
 
     // Use this for initialization
     void Start()
     {
-		currentCellSize = 4;
+		_currentCellSize = 4;
     }
 
     // Update is called once per frame
@@ -35,24 +35,24 @@ public class Player : MonoBehaviour
         {
 			if (Input.GetKeyUp (KeyCode.A)) {
 				Debug.Log("Pressing A - " + Name);
-				if(this.Name == getNeighborOwner(left))
-					setLocation (new Vector3 (left.x, left.y, -2));
+				if(this.Name == GetNeighborOwner(Left))
+					setLocation (new Vector3 (Left.x, Left.y, -2));
 				
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
 				Debug.Log("Pressing W - " + Name);
-				if(this.Name == getNeighborOwner(up))
-					setLocation (new Vector3 (up.x, up.y, -2));
+				if(this.Name == GetNeighborOwner(Up))
+					setLocation (new Vector3 (Up.x, Up.y, -2));
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
 				Debug.Log("Pressing S - " + Name);
-				if(this.Name == getNeighborOwner(down))
-					setLocation (new Vector3 (down.x, down.y, -2));
+				if(this.Name == GetNeighborOwner(Down))
+					setLocation (new Vector3 (Down.x, Down.y, -2));
 			}
 			if (Input.GetKeyUp (KeyCode.D)) {
 				Debug.Log ("Pressing D - " + Name);
-				if(this.Name == getNeighborOwner(right))
-					setLocation (new Vector3 (right.x, right.y, -2));
+				if(this.Name == GetNeighborOwner(Right))
+					setLocation (new Vector3 (Right.x, Right.y, -2));
 			}
 				
         }
@@ -72,25 +72,31 @@ public class Player : MonoBehaviour
 //        //CurrentLocation = new int[2] { (int) this.transform.position.y, (int)this.transform.position.x};
 //    }
 
-	void getNeighbor()
+	void GetNeighbor()
 	{
-		up = new Vector2 ( CurrentLocation.x , (CurrentLocation.y + 1));
-		down = new Vector2 ( CurrentLocation.x, (CurrentLocation.y - 1) );
-		left = new Vector2 ( (CurrentLocation.x - 1), CurrentLocation.y );
-		right = new Vector2 ( (CurrentLocation.x + 1), CurrentLocation.y );
+		Up = new Vector2 ( _currentLocation.x , (_currentLocation.y + 1));
+		Down = new Vector2 ( _currentLocation.x, (_currentLocation.y - 1) );
+		Left = new Vector2 ( (_currentLocation.x - 1), _currentLocation.y );
+		Right = new Vector2 ( (_currentLocation.x + 1), _currentLocation.y );
 	}
 
 
 
-	public void setLocation(Vector3 newLocation)
+	public bool setLocation(Vector3 newLocation)
 	{
-		CurrentLocation = newLocation;
+		_currentLocation = newLocation;
 		this.transform.position = newLocation;
-		checkBehind ();
-		getNeighbor ();
+		if (this.transform.position == CheckBehind ()) {
+			GetNeighbor ();
+			return true;
+		} else {
+			return false;
+		}
+
+
 	}
 
-	void checkBehind()
+	Vector2 CheckBehind()
 	{
 		var back = transform.TransformDirection(Vector3.back);
 		//note the use of var as the type. This is because in c# you 
@@ -99,26 +105,31 @@ public class Player : MonoBehaviour
 		RaycastHit hit;
 		Debug.DrawRay(transform.position, -back * 4, Color.green);
 
-		if (Physics.Raycast(transform.position, -back, out hit, 4))
-		{
-			Debug.Log(hit.collider.gameObject.GetComponent<Tile> ().ID.ToString());
+		if (Physics.Raycast (transform.position, -back, out hit, 4)) {
+			Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
+			return hit.collider.gameObject.GetComponent<Tile> ().Id;
+		} else {
+			return Vector2.zero;
 		}
 	}
 
-	public string getNeighborOwner(Vector2 moveTo) 
+	public string GetNeighborOwner(Vector2 moveTo)
 	{
-		List<GameObject> Tl = GameManager.instance.getTiles ();
-
+		List<GameObject> Tl = GameManager.instance.GetTiles ();
 		foreach (GameObject i in Tl) {
 			Tile it = i.GetComponent<Tile> ();
-			if (it.ID == moveTo)
-				return it.player.Name;
+		    Debug.Log(moveTo + " > " + it.Id);
+			if (it.Id == moveTo)
+				return it.Player.Name;
+
 		}
 		return "Unknown";
 
 		//return Tl.Find(obj => obj.GetComponent<Tile>().ID == moveTo).GetComponent<Tile> ().player.Name;
 
 	}
+
+
 
 
 }
