@@ -37,44 +37,23 @@ public class Player : MonoBehaviour
 			if (Input.GetKeyUp (KeyCode.A)) {
 				//Debug.Log("Pressing A - " + Name);
 				Vector3 newPos = GetMoveToTile ("left");
-				bool newPosShadow = GetTile (newPos).IsShadow;
-				if (this.Name == GetNeighborOwner (newPos).Name) {
-					if (!newPosShadow) {
-						setLocation (newPos);
-					}
-				}
+				WalkTo(newPos);
 					
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
 				//Debug.Log("Pressing W - " + Name);
 				Vector3 newPos = GetMoveToTile ("up");
-				bool newPosShadow = GetTile (newPos).IsShadow;
-				if (this.Name == GetNeighborOwner (newPos).Name) {
-					if (!newPosShadow) {
-						setLocation (newPos);
-					}
-				}
+				WalkTo(newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
 				Debug.Log("Pressing S - " + Name);
 				Vector3 newPos = GetMoveToTile ("down");
-				bool newPosShadow = GetTile (newPos).IsShadow;
-				if (this.Name == GetNeighborOwner (newPos).Name) {
-					if (!newPosShadow) {
-						setLocation (newPos);
-					}
-				}
+				WalkTo(newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.D)) {
 				Debug.Log ("Pressing D - " + Name);
 				Vector3 newPos = GetMoveToTile ("right");
-
-				bool newPosShadow = GetTile (newPos).IsShadow;
-				if (this.Name == GetNeighborOwner (newPos).Name) {
-					if (!newPosShadow) {
-						setLocation (newPos);
-					}
-				}
+				WalkTo(newPos);
 			}
 
 			if (Input.GetKeyUp (KeyCode.Space)) {
@@ -158,7 +137,6 @@ public class Player : MonoBehaviour
 			if (it.Id == tileLocation) {
 				return it; 
 			}
-
 		}
 		return null;
 	}
@@ -219,6 +197,14 @@ public class Player : MonoBehaviour
 	
 	}
 
+	void WalkTo(Vector3 to){
+		bool newPosShadow = GetTile (to).IsShadow;
+		if (!newPosShadow) {
+			if (this.Name == GetNeighborOwner (to).Name) {
+				setLocation (to);
+			}
+		}
+	}
 
 
 
