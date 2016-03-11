@@ -129,21 +129,9 @@ public class GameManager : MonoBehaviour
         Tile newTile = tilePrefab.GetComponent<Tile>();
         //newTile.ID = new int[2] {i,j};
 		newTile.Id = new Vector2 ((i * Cellsize) / 2, (j * Cellsize) / 2);
-        newTile.Player = player;
+		newTile.SetPlayer(player);
         newTile.IsShadow = false;
         
-        if (player.Name == "Good")
-        {
-            newTile.GetComponent<SpriteRenderer>().color = GameColor.Good;
-        }
-        else if (player.Name == "Evil")
-        {
-            newTile.GetComponent<SpriteRenderer>().color = GameColor.Evil;
-        }
-        else
-        {
-            newTile.GetComponent<SpriteRenderer>().color = GameColor.Error;
-        }
 
         newTile.transform.localScale = new Vector3(Cellsize, Cellsize, Cellsize);
 

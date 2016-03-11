@@ -4,7 +4,7 @@ using System.Linq;
 
 public class Player : MonoBehaviour
 {
-    public string Name;
+	public string Name;
     public int MovementPoints;
     public int BuildingPoints;
     public int Money;
@@ -35,13 +35,13 @@ public class Player : MonoBehaviour
         if (HisTurn)
         {
 			if (Input.GetKeyUp (KeyCode.A)) {
-				Debug.Log("Pressing A - " + Name);
+				//Debug.Log("Pressing A - " + Name);
 				Vector3 newPos = GetMoveToTile ("left");
 				if(this.Name == GetNeighborOwner(newPos))
 					setLocation (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
-				Debug.Log("Pressing W - " + Name);
+				//Debug.Log("Pressing W - " + Name);
 				Vector3 newPos = GetMoveToTile ("up");
 				if(this.Name == GetNeighborOwner(newPos))
 					setLocation (newPos);
@@ -57,6 +57,11 @@ public class Player : MonoBehaviour
 				Vector3 newPos = GetMoveToTile ("right");
 				if(this.Name == GetNeighborOwner(newPos))
 					setLocation (newPos);
+			}
+
+			if (Input.GetKeyUp (KeyCode.Space)) {
+				Debug.Log ("Pressing Space - " + Name);
+				PlaceBlock ();
 			}
 				
         }
@@ -114,7 +119,7 @@ public class Player : MonoBehaviour
 			//Debug.Log ("Searching: " + it.Id + " - " + moveTo);
 
 			if (it.Id == moveTo) {
-				Debug.Log ("FOUND!: " + it.Id + " - " + it.Player.Name);
+				//Debug.Log ("FOUND!: " + it.Id + " - " + it.Player.Name);
 				return it.Player.Name; 
 				//Debug.Log (it.Id + " - " + it.Player.Name);
 			}
@@ -124,6 +129,20 @@ public class Player : MonoBehaviour
 
 		//return Tl.Find(obj => obj.GetComponent<Tile>().ID == moveTo).GetComponent<Tile> ().player.Name;
 
+	}
+
+	public Tile GetTile(Vector2 tileLocation)
+	{
+		List<GameObject> Tl = GameManager.instance.GetTiles();
+
+		foreach (GameObject i in Tl) {
+			Tile it = i.GetComponent<Tile> ();
+			if (it.Id == tileLocation) {
+				return it; 
+			}
+
+		}
+		return null;
 	}
 
 	Vector3 GetMoveToTile (string move)
@@ -152,6 +171,28 @@ public class Player : MonoBehaviour
 			moveToVector.y = _currentLocation.y;
 			return moveToVector;
 		}
+	}
+
+	void PlaceBlock(){
+		if (this.Name == "Good") {
+			Vector3 blockPlace = GetMoveToTile ("down");
+			if ("Evil" == GetNeighborOwner (blockPlace)) {
+				Tile CurrentTile = GetTile (blockPlace);
+				CurrentTile.SwitchOwner (this, false);
+				//return true;
+			}
+		} else if (this.Name == "Evil") {
+			Vector3 blockPlace = GetMoveToTile ("up");
+			if ("Good" == GetNeighborOwner (blockPlace)) {
+				Tile CurrentTile = GetTile (blockPlace);
+				CurrentTile.SwitchOwner (this, false);
+				//return true;
+			}
+
+		} else {
+			//return false;
+		}
+	
 	}
 
 
