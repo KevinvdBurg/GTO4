@@ -30,7 +30,9 @@ public class Tile : MonoBehaviour
         //switches the owner of the grid
         //if shadow is true the the bock is not from the player but you can't build on it
 		SetPlayer(newPlayer);
-		IsShadow = isShadow;
+		if (isShadow) {
+			SetShadow (isShadow);
+		}
 
     }
 
@@ -52,11 +54,7 @@ public class Tile : MonoBehaviour
 
 		this.Player = player;
     }
-
-	public Player getPlayer()
-	{
-		return Player;
-	}
+		
 
 	public void OnMouseUp(){
 		OnPClick ();
@@ -64,6 +62,29 @@ public class Tile : MonoBehaviour
 
 	public void OnPClick(){
 		this.GetComponent<SpriteRenderer>().color = GameColor.Error;
+	}
+
+	public void SetShadow(bool isShadow){
+		IsShadow = isShadow;
+
+		if (Player.Name == "Good")
+		{
+			if(isShadow)
+				this.GetComponent<SpriteRenderer>().color = GameColor.GoodShadow;
+		}
+		else if (Player.Name == "Evil")
+		{
+			if(isShadow)
+				this.GetComponent<SpriteRenderer>().color = GameColor.EvilShadow;
+		}
+		else
+		{
+			this.GetComponent<SpriteRenderer>().color = GameColor.Error;
+		}
+	}
+
+	public bool GetShadow(){
+		return IsShadow;
 	}
 
 

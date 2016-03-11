@@ -37,26 +37,44 @@ public class Player : MonoBehaviour
 			if (Input.GetKeyUp (KeyCode.A)) {
 				//Debug.Log("Pressing A - " + Name);
 				Vector3 newPos = GetMoveToTile ("left");
-				if(this.Name == GetNeighborOwner(newPos))
-					setLocation (newPos);
+				bool newPosShadow = GetTile (newPos).IsShadow;
+				if (this.Name == GetNeighborOwner (newPos).Name) {
+					if (!newPosShadow) {
+						setLocation (newPos);
+					}
+				}
+					
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
 				//Debug.Log("Pressing W - " + Name);
 				Vector3 newPos = GetMoveToTile ("up");
-				if(this.Name == GetNeighborOwner(newPos))
-					setLocation (newPos);
+				bool newPosShadow = GetTile (newPos).IsShadow;
+				if (this.Name == GetNeighborOwner (newPos).Name) {
+					if (!newPosShadow) {
+						setLocation (newPos);
+					}
+				}
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
 				Debug.Log("Pressing S - " + Name);
 				Vector3 newPos = GetMoveToTile ("down");
-				if(this.Name == GetNeighborOwner(newPos))
-					setLocation (newPos);
+				bool newPosShadow = GetTile (newPos).IsShadow;
+				if (this.Name == GetNeighborOwner (newPos).Name) {
+					if (!newPosShadow) {
+						setLocation (newPos);
+					}
+				}
 			}
 			if (Input.GetKeyUp (KeyCode.D)) {
 				Debug.Log ("Pressing D - " + Name);
 				Vector3 newPos = GetMoveToTile ("right");
-				if(this.Name == GetNeighborOwner(newPos))
-					setLocation (newPos);
+
+				bool newPosShadow = GetTile (newPos).IsShadow;
+				if (this.Name == GetNeighborOwner (newPos).Name) {
+					if (!newPosShadow) {
+						setLocation (newPos);
+					}
+				}
 			}
 
 			if (Input.GetKeyUp (KeyCode.Space)) {
@@ -106,7 +124,7 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	public string GetNeighborOwner(Vector2 moveTo)
+	public Player GetNeighborOwner(Vector2 moveTo)
 	{
 		List<GameObject> Tl = GameManager.instance.GetTiles();
 
@@ -119,13 +137,13 @@ public class Player : MonoBehaviour
 			//Debug.Log ("Searching: " + it.Id + " - " + moveTo);
 
 			if (it.Id == moveTo) {
-				//Debug.Log ("FOUND!: " + it.Id + " - " + it.Player.Name);
-				return it.Player.Name; 
+				Debug.Log ("FOUND!: " + it.Id + " - " + it.Player.Name);
+				return it.Player;
 				//Debug.Log (it.Id + " - " + it.Player.Name);
 			}
 			
 		}
-		return "Unknown";
+		return null;
 
 		//return Tl.Find(obj => obj.GetComponent<Tile>().ID == moveTo).GetComponent<Tile> ().player.Name;
 
@@ -176,16 +194,22 @@ public class Player : MonoBehaviour
 	void PlaceBlock(){
 		if (this.Name == "Good") {
 			Vector3 blockPlace = GetMoveToTile ("down");
-			if ("Evil" == GetNeighborOwner (blockPlace)) {
-				Tile CurrentTile = GetTile (blockPlace);
-				CurrentTile.SwitchOwner (this, false);
+			if ("Evil" == GetNeighborOwner (blockPlace).Name) {
+				Tile OtherTile = GetTile (blockPlace);
+				Tile ThisTile = GetTile (_currentLocation);
+				OtherTile.SwitchOwner (this, true);
+				ThisTile.SwitchOwner (this, true);
+				setLocation (GetMoveToTile ("up"));
 				//return true;
 			}
 		} else if (this.Name == "Evil") {
 			Vector3 blockPlace = GetMoveToTile ("up");
-			if ("Good" == GetNeighborOwner (blockPlace)) {
-				Tile CurrentTile = GetTile (blockPlace);
-				CurrentTile.SwitchOwner (this, false);
+			if ("Good" == GetNeighborOwner (blockPlace).Name) {
+				Tile OtherTile = GetTile (blockPlace);
+				Tile ThisTile = GetTile (_currentLocation);
+				OtherTile.SwitchOwner (this, true);
+				ThisTile.SwitchOwner (this, true);
+				setLocation (GetMoveToTile ("down"));
 				//return true;
 			}
 

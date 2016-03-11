@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour
         //newTile.ID = new int[2] {i,j};
 		newTile.Id = new Vector2 ((i * Cellsize) / 2, (j * Cellsize) / 2);
 		newTile.SetPlayer(player);
-        newTile.IsShadow = false;
+		newTile.SetShadow(false);
         
 
         newTile.transform.localScale = new Vector3(Cellsize, Cellsize, Cellsize);
