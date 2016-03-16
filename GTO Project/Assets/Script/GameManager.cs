@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     public GameObject GoEvilPlayer;
     private Player _goodPlayer;
     private Player _evilPlayer;
-    public List<Player> PlayerList;
+	private List<Player> _playerList = new List<Player>();
     public GameObject TheGrid;
     public List<GameObject> Tiles; 
 
@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour
        
         _goodPlayer = GoGoodPlayer.GetComponent<Player>();
         _evilPlayer = GoEvilPlayer.GetComponent<Player>();
-        PlayerList.Add(_goodPlayer);
-        PlayerList.Add(_evilPlayer);
+		_playerList.Add(_goodPlayer);
+		_playerList.Add(_evilPlayer);
 
         float camX = ((Width * Cellsize) /4) ;
         float camy = ((Height * Cellsize) /4);
@@ -98,7 +98,6 @@ public class GameManager : MonoBehaviour
                     GridBlock(i, j, _goodPlayer);
                     if (!_goodPlayer.OnStartPos)
                     {
-                        //GOGoodPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
 						_goodPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
 						_goodPlayer.OnStartPos = true;
                     }
@@ -107,14 +106,12 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     GridBlock(i, j, _evilPlayer);
-                    if (!_evilPlayer.OnStartPos)
-                    {
-                        //GOEvilPlayer.transform.position = new Vector3((i * cellsize) / 2, (j * cellsize) / 2, -2);
-                        
-						_evilPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
-						_evilPlayer.OnStartPos = true;
-                    }
-                        
+					if (j >= (Height / 2) - 1 && i >= Width - 1) {
+						if (!_evilPlayer.OnStartPos) {
+							_evilPlayer.setLocation (new Vector3 ((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
+							_evilPlayer.OnStartPos = true;
+						}   
+					}
                 }
             }
         }
@@ -156,6 +153,10 @@ public class GameManager : MonoBehaviour
 
 	public List<GameObject> GetTiles(){
 		return Tiles;
+	}
+
+	public List<Player> GetPlayerList(){
+		return _playerList;
 	}
 		
 

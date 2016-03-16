@@ -10,7 +10,7 @@ public class TurnManager : MonoBehaviour {
     //Roteer camara na buurt
 
 	public UIManager UIManager ;
-    private List<Player> _players = new List<Player>(2);
+	private List<Player> _players;
 
     // Use this for initialization
     void Start ()
@@ -28,32 +28,26 @@ public class TurnManager : MonoBehaviour {
 
     public void StartGame()
     {
-        StartTurn(GameManager.instance.PlayerList[Random.Range(0, GameManager.instance.PlayerList.Count)]);
-    }
-
-    void UpdateUI(Player updateUiPlayer)
-    {
-		UIManager.MP.text = updateUiPlayer.MovementPoints + "";
-		UIManager.BP.text = updateUiPlayer.BuildingPoints + "";
-		UIManager.GP.text = updateUiPlayer.Money + "";
+		_players = GameManager.instance.GetPlayerList ();
+		StartTurn(_players[Random.Range (0, _players.Count)]);
     }
 
     void StartTurn(Player playerThatStartedTurn)
     {
         playerThatStartedTurn.HisTurn = true;
-		UIManager.TurnIndicator.text = playerThatStartedTurn.Name;
-        UpdateUI(playerThatStartedTurn);
+		string playerName = playerThatStartedTurn.Name;
+		UIManager.TurnIndicator.text = playerName;
+		UIManager.FlipCamera (playerName);
+		UIManager.UpdateUI(playerThatStartedTurn);
     }
     
     void EndTurn(Player playerThatEndedTurn)
     {
+		StartTurn(GetPlayerTurn(false));
         playerThatEndedTurn.Money += 100;
         playerThatEndedTurn.BuildingPoints += 5;
         playerThatEndedTurn.MovementPoints += 5;
         playerThatEndedTurn.HisTurn = false;
-
-        StartTurn(GetPlayerTurn(false));
-
     }
 
     Player GetPlayerTurn(bool turn)

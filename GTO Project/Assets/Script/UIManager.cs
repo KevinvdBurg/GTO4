@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour {
     public Text BP;
     public Text GP;
 
+	public Camera MCamera;
 
 	// Use this for initialization
 	void Start () {
@@ -43,5 +44,19 @@ public class UIManager : MonoBehaviour {
     {
         GP.text = gp;
     }
+
+	public void FlipCamera(string playerName){
+		if (playerName == "Good")
+			MCamera.transform.rotation = Quaternion.Euler(0,0,0);
+		else
+			MCamera.transform.rotation = Quaternion.Euler(0,0,180);
+	}
+
+	public void UpdateUI(Player updateUiPlayer)
+	{
+		MP.text = updateUiPlayer.MovementPoints + "";
+		BP.text = updateUiPlayer.BuildingPoints + "";
+		GP.text = updateUiPlayer.Money + "";
+	}
 
 }

@@ -30,38 +30,34 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-		
+    {		
         if (HisTurn)
         {
 			if (Input.GetKeyUp (KeyCode.A)) {
-				//Debug.Log("Pressing A - " + Name);
-				Vector3 newPos = GetMoveToTile ("left");
-				WalkTo(newPos);
-					
+				Vector3 newPos = GetMoveToTile ("left", Name);
+				WalkTo (newPos);
+
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
-				//Debug.Log("Pressing W - " + Name);
-				Vector3 newPos = GetMoveToTile ("up");
-				WalkTo(newPos);
+				Debug.Log ("Pressing W - " + Name);
+				Vector3 newPos = GetMoveToTile ("up", Name);
+				WalkTo (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
-				Debug.Log("Pressing S - " + Name);
-				Vector3 newPos = GetMoveToTile ("down");
-				WalkTo(newPos);
+				Debug.Log ("Pressing S - " + Name);
+				Vector3 newPos = GetMoveToTile ("down", Name);
+				WalkTo (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.D)) {
 				Debug.Log ("Pressing D - " + Name);
-				Vector3 newPos = GetMoveToTile ("right");
-				WalkTo(newPos);
+				Vector3 newPos = GetMoveToTile ("right", Name);
+				WalkTo (newPos);
 			}
-
 			if (Input.GetKeyUp (KeyCode.Space)) {
 				Debug.Log ("Pressing Space - " + Name);
 				PlaceBlock ();
 			}
-				
-        }
+		}
     }
     
 
@@ -141,54 +137,80 @@ public class Player : MonoBehaviour
 		return null;
 	}
 
-	Vector3 GetMoveToTile (string move)
+	Vector3 GetMoveToTile (string move, string playerName)
 	{
-		Vector3 moveToVector = new Vector2 ();
-		moveToVector.z = -2;
-		if (move == "up") {
-			moveToVector.x = _currentLocation.x;
-			moveToVector.y = _currentLocation.y + 2;
+		if (playerName == "Good") {
+			Vector3 moveToVector = new Vector2 ();
+			moveToVector.z = -2;
+			if (move == "up") {
+				moveToVector.x = _currentLocation.x;
+				moveToVector.y = _currentLocation.y + 2;
 				return moveToVector;
-		} else if (move == "down") {
-			moveToVector.x = _currentLocation.x;
-			moveToVector.y = _currentLocation.y - 2;
-			return moveToVector;
-		} else if (move == "left") {
-			moveToVector.x = _currentLocation.x - 2;
-			moveToVector.y = _currentLocation.y;
-			return moveToVector;
-		} else if (move == "right") {
-			moveToVector.x = _currentLocation.x + 2;
-			moveToVector.y = _currentLocation.y;
-			return moveToVector;
+			} else if (move == "down") {
+				moveToVector.x = _currentLocation.x;
+				moveToVector.y = _currentLocation.y - 2;
+				return moveToVector;
+			} else if (move == "left") {
+				moveToVector.x = _currentLocation.x - 2;
+				moveToVector.y = _currentLocation.y;
+				return moveToVector;
+			} else if (move == "right") {
+				moveToVector.x = _currentLocation.x + 2;
+				moveToVector.y = _currentLocation.y;
+				return moveToVector;
+			} else {
+				Debug.Log ("Not a good move");
+				moveToVector.x = _currentLocation.x;
+				moveToVector.y = _currentLocation.y;
+				return moveToVector;
+			}
 		} else {
-			Debug.Log ("Not a good move");
-			moveToVector.x = _currentLocation.x;
-			moveToVector.y = _currentLocation.y;
-			return moveToVector;
+			Vector3 moveToVector = new Vector2 ();
+			moveToVector.z = -2;
+			if (move == "down") {
+				moveToVector.x = _currentLocation.x;
+				moveToVector.y = _currentLocation.y + 2;
+				return moveToVector;
+			} else if (move == "up") {
+				moveToVector.x = _currentLocation.x;
+				moveToVector.y = _currentLocation.y - 2;
+				return moveToVector;
+			} else if (move == "right") {
+				moveToVector.x = _currentLocation.x - 2;
+				moveToVector.y = _currentLocation.y;
+				return moveToVector;
+			} else if (move == "left") {
+				moveToVector.x = _currentLocation.x + 2;
+				moveToVector.y = _currentLocation.y;
+				return moveToVector;
+			} else {
+				Debug.Log ("Not a good move");
+				moveToVector.x = _currentLocation.x;
+				moveToVector.y = _currentLocation.y;
+				return moveToVector;
+			}
 		}
 	}
 
 	void PlaceBlock(){
+		//This code needs to be cleaned later! most of the code is the same ( please fix futher kevin thx in advance!)
 		if (this.Name == "Good") {
-			Vector3 blockPlace = GetMoveToTile ("down");
+			Vector3 blockPlace = GetMoveToTile ("down", this.Name);
 			if ("Evil" == GetNeighborOwner (blockPlace).Name) {
 				Tile OtherTile = GetTile (blockPlace);
 				Tile ThisTile = GetTile (_currentLocation);
 				OtherTile.SwitchOwner (this, true);
 				ThisTile.SwitchOwner (this, true);
-				setLocation (GetMoveToTile ("up"));
-				//return true;
+				setLocation (GetMoveToTile ("up", this.Name));
 			}
 		} else if (this.Name == "Evil") {
-			Vector3 blockPlace = GetMoveToTile ("up");
+			Vector3 blockPlace = GetMoveToTile ("down", this.Name);
 			if ("Good" == GetNeighborOwner (blockPlace).Name) {
 				Tile OtherTile = GetTile (blockPlace);
 				Tile ThisTile = GetTile (_currentLocation);
 				OtherTile.SwitchOwner (this, true);
 				ThisTile.SwitchOwner (this, true);
-				setLocation (GetMoveToTile ("down"));
-				//return true;
+				setLocation (GetMoveToTile ("up", this.Name));
 			}
 
 		} else {
