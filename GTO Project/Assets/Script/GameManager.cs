@@ -44,47 +44,7 @@ public class GameManager : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        /*if (Input.GetMouseButtonDown(0))
-        {
-            if (!one_click) // first click no previous clicks
-            {
-                Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                one_click = true;
-
-                timer_for_double_click = Time.time; // save the current time
-                target = Input.mousePosition;
-                target = Camera.main.ScreenToWorldPoint(target);
-                target.z = 0f;
-                speed = 10;
-            }
-            else
-            {
-                one_click = false; // found a double click, now reset
-                speed = 20;
-            }
-        }
-        if (one_click)
-        {
-            // if the time now is delay seconds more than when the first click started. 
-           
-            if ((Time.time - timer_for_double_click) > delay)
-            {
-
-                //basically if thats true its been too long and we want to reset so the next click is simply a single click and not a double click.
-
-                one_click = false;
-
-            }
-        }
-	    float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, target, step);
-        //transform.position = Vector3.Lerp (transform.position, target, speed * Time.deltaTime);
-        if (target == transform.position)
-        {
-            speed = 0f;
-        }*/
-
-
+		
     }
 
     void GenGrid()
@@ -115,10 +75,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-//		foreach (GameObject item in Tiles) {
-//			item.GetComponent<Tile> ().getNeighborOwners ();
-//		}
     }
 
     void GridBlock(int i, int j, Player player)
@@ -158,10 +114,5 @@ public class GameManager : MonoBehaviour
 	public List<Player> GetPlayerList(){
 		return _playerList;
 	}
-		
-
-    
-
-
 
 }

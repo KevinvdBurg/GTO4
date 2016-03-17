@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
 	public Vector2 Left;
 	public Vector2 Right;
 
+	public List<Tile> ShadowBlocks = new List<Tile>();
 
 
 	private int _currentCellSize;
@@ -39,22 +40,18 @@ public class Player : MonoBehaviour
 
 			}
 			if (Input.GetKeyUp (KeyCode.W)) {
-				Debug.Log ("Pressing W - " + Name);
 				Vector3 newPos = GetMoveToTile ("up", Name);
 				WalkTo (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
-				Debug.Log ("Pressing S - " + Name);
 				Vector3 newPos = GetMoveToTile ("down", Name);
 				WalkTo (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.D)) {
-				Debug.Log ("Pressing D - " + Name);
 				Vector3 newPos = GetMoveToTile ("right", Name);
 				WalkTo (newPos);
 			}
 			if (Input.GetKeyUp (KeyCode.Space)) {
-				Debug.Log ("Pressing Space - " + Name);
 				PlaceBlock ();
 			}
 		}
@@ -66,13 +63,6 @@ public class Player : MonoBehaviour
         return "Name: " + Name + ", MovementPoints: " + MovementPoints + ", BuildingPoints: " + BuildingPoints +
                ", Money: " + Money + ", HisTurn: " + HisTurn;
     }
-
-//    void setLocation()
-//    {
-//        Debug.Log(this.transform.position.y);
-//        Debug.Log(this.transform.position.x);
-//        //CurrentLocation = new int[2] { (int) this.transform.position.y, (int)this.transform.position.x};
-//    }
 
 
 	public void setLocation(Vector3 newLocation)
@@ -88,10 +78,9 @@ public class Player : MonoBehaviour
 		// can have lamda functions which open up the use of untyped variables
 		//these variables can only live INSIDE a function. 
 		RaycastHit hit;
-		Debug.DrawRay(transform.position, -back * 4, Color.green);
 
 		if (Physics.Raycast (transform.position, -back, out hit, 4)) {
-			Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
+			//Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
 			Vector2 TileID = hit.collider.gameObject.GetComponent<Tile> ().Id;
 			return TileID;
 		} else {
@@ -108,19 +97,13 @@ public class Player : MonoBehaviour
 
 		foreach (GameObject i in Tl) {
 			Tile it = i.GetComponent<Tile> ();
-			//Debug.Log ("Searching" + moveTo);
-			//Debug.Log ("Searching: " + it.Id + " - " + moveTo);
 
 			if (it.Id == moveTo) {
-				Debug.Log ("FOUND!: " + it.Id + " - " + it.Player.Name);
 				return it.Player;
-				//Debug.Log (it.Id + " - " + it.Player.Name);
 			}
 			
 		}
 		return null;
-
-		//return Tl.Find(obj => obj.GetComponent<Tile>().ID == moveTo).GetComponent<Tile> ().player.Name;
 
 	}
 
@@ -159,7 +142,6 @@ public class Player : MonoBehaviour
 				moveToVector.y = _currentLocation.y;
 				return moveToVector;
 			} else {
-				Debug.Log ("Not a good move");
 				moveToVector.x = _currentLocation.x;
 				moveToVector.y = _currentLocation.y;
 				return moveToVector;
@@ -184,7 +166,6 @@ public class Player : MonoBehaviour
 				moveToVector.y = _currentLocation.y;
 				return moveToVector;
 			} else {
-				Debug.Log ("Not a good move");
 				moveToVector.x = _currentLocation.x;
 				moveToVector.y = _currentLocation.y;
 				return moveToVector;
@@ -201,6 +182,8 @@ public class Player : MonoBehaviour
 				Tile ThisTile = GetTile (_currentLocation);
 				OtherTile.SwitchOwner (this, true);
 				ThisTile.SwitchOwner (this, true);
+				AddShadow (OtherTile);
+				AddShadow (ThisTile);
 				setLocation (GetMoveToTile ("up", this.Name));
 			}
 		} else if (this.Name == "Evil") {
@@ -210,12 +193,16 @@ public class Player : MonoBehaviour
 				Tile ThisTile = GetTile (_currentLocation);
 				OtherTile.SwitchOwner (this, true);
 				ThisTile.SwitchOwner (this, true);
+				AddShadow (OtherTile);
+				AddShadow (ThisTile);
 				setLocation (GetMoveToTile ("up", this.Name));
 			}
 
 		} else {
 			//return false;
 		}
+
+		CheckShadows();
 	
 	}
 
@@ -228,6 +215,66 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	public void AddShadow(Tile tile){
+		ShadowBlocks.Add (tile);
+	}
 
 
+
+	public void CheckShadows(){
+		//Sorts the list
+		List<Tile> xSort = ShadowBlocks.OrderBy(x => x.Id[1]).ThenBy(x => x.Id[0]).ToList();
+		//List<Tile> ySort = ShadowBlocks.OrderBy(x => x.Id[0]).ThenBy(x => x.Id[1]).ToList();
+
+
+		List<List<Tile>> allSeq = new List<List<Tile>>(); //a List with all the seqlists
+		List<Tile> tempSeq = new List<Tile>(); // a temp list this will be only used while looping
+		Tile lastInsertedTile = null; // the last inserted tile in a seq
+
+		Tile lastTile = xSort[xSort.Count - 1]; //Gets the last tile in the xSort
+
+
+		foreach (Tile tile in xSort) {
+			
+			if (lastInsertedTile == null) {
+				tempSeq.Add (tile);
+			} else {
+				//Checks if the tiles are in the same row
+				if (lastInsertedTile.Id[1] == tile.Id[1]) {
+					//check if the tiles are next to each other
+					if (lastInsertedTile.Id[0] == tile.Id[0] + 2 || lastInsertedTile.Id[0] == tile.Id[0] - 2 ) {
+						//adds the tile to the temp list
+						tempSeq.Add (tile);
+						//if it is the last tile it will be counted as the final seq
+						if (tile == lastTile) {
+							allSeq.Add (tempSeq);
+						}
+					} else {
+						//adds the tempseq to the overall list with seq
+						allSeq.Add (tempSeq);
+						tempSeq = new List<Tile> (); // creates a new and clean list
+						tempSeq.Add (tile);
+					}
+				} 
+				else {
+					allSeq.Add (tempSeq);
+					tempSeq = new List<Tile> ();
+					tempSeq.Add (tile);
+				}
+			}
+			lastInsertedTile = tile; // sets the last inserted tile
+		}
+			
+		for(int i = 0; i < allSeq.Count; i++)
+		{
+			List<Tile> aSeq = allSeq[i];
+			if (aSeq.Count >= 4) {
+				foreach (Tile item in aSeq) {
+					item.SetShadow (false);
+					ShadowBlocks.Remove (item);
+				}
+			}
+
+		}
+	}
 }

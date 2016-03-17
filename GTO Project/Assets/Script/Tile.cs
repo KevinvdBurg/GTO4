@@ -71,11 +71,15 @@ public class Tile : MonoBehaviour
 		{
 			if(isShadow)
 				this.GetComponent<SpriteRenderer>().color = GameColor.GoodShadow;
+			else 
+				this.GetComponent<SpriteRenderer>().color = GameColor.Good;
 		}
 		else if (Player.Name == "Evil")
 		{
 			if(isShadow)
 				this.GetComponent<SpriteRenderer>().color = GameColor.EvilShadow;
+			else
+				this.GetComponent<SpriteRenderer>().color = GameColor.Evil;
 		}
 		else
 		{
@@ -87,6 +91,10 @@ public class Tile : MonoBehaviour
 		return IsShadow;
 	}
 
+  public override string ToString()
+  {
+    return "Id: " + Id.ToString() + " - Owner: " + Player.Name + " - isShadow: " + IsShadow;
+  }
 
     
 }
