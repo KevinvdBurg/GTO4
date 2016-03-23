@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	public Player GetNeighborOwner(Vector2 moveTo)
+	public Tile GetNeighborOwner(Vector2 moveTo)
 	{
 		List<GameObject> Tl = GameManager.instance.GetTiles();
 
@@ -98,8 +98,9 @@ public class Player : MonoBehaviour
 		foreach (GameObject i in Tl) {
 			Tile it = i.GetComponent<Tile> ();
 
-			if (it.Id == moveTo) {
-				return it.Player;
+			if (it.Id == moveTo)
+			{
+			  return it;
 			}
 			
 		}
@@ -173,43 +174,110 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	Vector3 GetMoveToTile (string move, string playerName, Vector3 location)
+	{
+		if (playerName == "Good") {
+			Vector3 moveToVector = new Vector2 ();
+			moveToVector.z = -2;
+			if (move == "up") {
+				moveToVector.x = location.x;
+				moveToVector.y = location.y + 2;
+				return moveToVector;
+			} else if (move == "down") {
+				moveToVector.x = location.x;
+				moveToVector.y = location.y - 2;
+				return moveToVector;
+			} else if (move == "left") {
+				moveToVector.x = location.x - 2;
+				moveToVector.y = location.y;
+				return moveToVector;
+			} else if (move == "right") {
+				moveToVector.x = location.x + 2;
+				moveToVector.y = location.y;
+				return moveToVector;
+			} else {
+				moveToVector.x = location.x;
+				moveToVector.y = location.y;
+				return moveToVector;
+			}
+		} else {
+			Vector3 moveToVector = new Vector2 ();
+			moveToVector.z = -2;
+			if (move == "down") {
+				moveToVector.x = location.x;
+				moveToVector.y = location.y + 2;
+				return moveToVector;
+			} else if (move == "up") {
+				moveToVector.x = location.x;
+				moveToVector.y = location.y - 2;
+				return moveToVector;
+			} else if (move == "right") {
+				moveToVector.x = location.x - 2;
+				moveToVector.y = location.y;
+				return moveToVector;
+			} else if (move == "left") {
+				moveToVector.x = location.x + 2;
+				moveToVector.y = location.y;
+				return moveToVector;
+			} else {
+				moveToVector.x = location.x;
+				moveToVector.y = location.y;
+				return moveToVector;
+			}
+		}
+	}
+
+
+
 	void PlaceBlock(){
-		//This code needs to be cleaned later! most of the code is the same ( please fix futher kevin thx in advance!)
+		
+		Vector3 blockPlace = GetMoveToTile ("down", this.Name);
+
+
+		Tile NeighborOwner = GetNeighborOwner (blockPlace);
+
 		if (this.Name == "Good") {
-			Vector3 blockPlace = GetMoveToTile ("down", this.Name);
-			if ("Evil" == GetNeighborOwner (blockPlace).Name) {
-				Tile OtherTile = GetTile (blockPlace);
-				Tile ThisTile = GetTile (_currentLocation);
-				OtherTile.SwitchOwner (this, true);
-				ThisTile.SwitchOwner (this, true);
-				AddShadow (OtherTile);
-				AddShadow (ThisTile);
-				setLocation (GetMoveToTile ("up", this.Name));
+			if (NeighborOwner.Player.Name == "Evil" || NeighborOwner.IsShadow) {
+				Block (blockPlace, NeighborOwner);
 			}
 		} else if (this.Name == "Evil") {
-			Vector3 blockPlace = GetMoveToTile ("down", this.Name);
-			if ("Good" == GetNeighborOwner (blockPlace).Name) {
-				Tile OtherTile = GetTile (blockPlace);
-				Tile ThisTile = GetTile (_currentLocation);
-				OtherTile.SwitchOwner (this, true);
-				ThisTile.SwitchOwner (this, true);
-				AddShadow (OtherTile);
-				AddShadow (ThisTile);
-				setLocation (GetMoveToTile ("up", this.Name));
+			if (NeighborOwner.Player.Name == "Good" || NeighborOwner.IsShadow) {
+				Block (blockPlace, NeighborOwner);
 			}
+		} 
 
-		} else {
-			//return false;
+
+	}
+
+	void Block(Vector3 blockPlace, Tile NeighborOwner){
+
+		Vector3 bPlace = blockPlace;
+		if(NeighborOwner.IsShadow){
+			bool isShadow = true;
+			while (isShadow) {
+				Vector3 movePlace = GetMoveToTile ("down", this.Name, bPlace);
+				Tile neigbor = GetNeighborOwner (movePlace);
+				bPlace = movePlace;
+				if (!neigbor.IsShadow)
+					isShadow = false;
+				 
+			}
 		}
 
+		Tile OtherTile = GetTile (bPlace);
+		Tile ThisTile = GetTile (_currentLocation);
+		OtherTile.SwitchOwner (this, true);
+		ThisTile.SwitchOwner (this, true);
+		AddShadow (OtherTile);
+		AddShadow (ThisTile);
+		setLocation (GetMoveToTile ("up", this.Name));
 		CheckShadows();
-	
 	}
 
 	void WalkTo(Vector3 to){
 		bool newPosShadow = GetTile (to).IsShadow;
 		if (!newPosShadow) {
-			if (this.Name == GetNeighborOwner (to).Name) {
+			if (this.Name == GetNeighborOwner (to).Player.Name) {
 				setLocation (to);
 			}
 		}
@@ -223,8 +291,11 @@ public class Player : MonoBehaviour
 
 	public void CheckShadows(){
 		//Sorts the list
+		if (ShadowBlocks == null)
+			return;
+
 		List<Tile> xSort = ShadowBlocks.OrderBy(x => x.Id[1]).ThenBy(x => x.Id[0]).ToList();
-		//List<Tile> ySort = ShadowBlocks.OrderBy(x => x.Id[0]).ThenBy(x => x.Id[1]).ToList();
+		List<Tile> ySort = ShadowBlocks.OrderBy(x => x.Id[0]).ThenBy(x => x.Id[1]).ToList();
 
 
 		List<List<Tile>> allSeq = new List<List<Tile>>(); //a List with all the seqlists
@@ -234,6 +305,7 @@ public class Player : MonoBehaviour
 		Tile lastTile = xSort[xSort.Count - 1]; //Gets the last tile in the xSort
 
 
+		//hotizantal
 		foreach (Tile tile in xSort) {
 			
 			if (lastInsertedTile == null) {
@@ -262,6 +334,40 @@ public class Player : MonoBehaviour
 					tempSeq.Add (tile);
 				}
 			}
+				
+			lastInsertedTile = tile; // sets the last inserted tile
+		}
+
+//		//vertical
+		foreach (Tile tile in ySort) {
+
+			if (lastInsertedTile == null) {
+				tempSeq.Add (tile);
+			} else {
+				//Checks if the tiles are in the same row
+				if (lastInsertedTile.Id[0] == tile.Id[0]) {
+					//check if the tiles are next to each other
+					if (lastInsertedTile.Id[1] == tile.Id[1] + 2 || lastInsertedTile.Id[1] == tile.Id[1] - 2 ) {
+						//adds the tile to the temp list
+						tempSeq.Add (tile);
+						//if it is the last tile it will be counted as the final seq
+						if (tile == lastTile) {
+							allSeq.Add (tempSeq);
+						}
+					} else {
+						//adds the tempseq to the overall list with seq
+						allSeq.Add (tempSeq);
+						tempSeq = new List<Tile> (); // creates a new and clean list
+						tempSeq.Add (tile);
+					}
+				} 
+				else {
+					allSeq.Add (tempSeq);
+					tempSeq = new List<Tile> ();
+					tempSeq.Add (tile);
+				}
+			}
+
 			lastInsertedTile = tile; // sets the last inserted tile
 		}
 			
