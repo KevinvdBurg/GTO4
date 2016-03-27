@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -19,41 +20,58 @@ public class Player : MonoBehaviour
 	public Vector2 Right;
 
 	public List<Tile> ShadowBlocks = new List<Tile>();
+	public Animator animator;
+//	private int _currentCellSize;
+
+	public UIManager uiManager;
 
 
-	private int _currentCellSize;
 
     // Use this for initialization
     void Start()
     {
-		_currentCellSize = 4;
+		//_currentCellSize = 4;
     }
 
     // Update is called once per frame
     void Update()
     {		
-        if (HisTurn)
+		if (HisTurn	)
         {
-			if (Input.GetKeyUp (KeyCode.A)) {
-				Vector3 newPos = GetMoveToTile ("left", Name);
-				WalkTo (newPos);
+			if (MovementPoints > 0) {
+				if (Input.GetKeyUp (KeyCode.W)) {
+					Vector3 newPos = GetMoveToTile ("up", Name);
+					WalkTo (newPos, 1);
+				}
+				if (Input.GetKeyUp (KeyCode.D)) {
+					Vector3 newPos = GetMoveToTile ("right", Name);
+					WalkTo (newPos, 2);
+				}
+				if (Input.GetKeyUp (KeyCode.S)) {
+					Vector3 newPos = GetMoveToTile ("down", Name);
+					WalkTo (newPos, 3);
+				}
+				if (Input.GetKeyUp (KeyCode.A)) {
+					Vector3 newPos = GetMoveToTile ("left", Name);
+					WalkTo (newPos, 4);
 
+				}
 			}
-			if (Input.GetKeyUp (KeyCode.W)) {
-				Vector3 newPos = GetMoveToTile ("up", Name);
-				WalkTo (newPos);
+			if (BuildingPoints > 0) {
+				if (Input.GetKeyUp (KeyCode.Space)) {
+					PlaceBlock ();
+				}
 			}
-			if (Input.GetKeyUp (KeyCode.S)) {
-				Vector3 newPos = GetMoveToTile ("down", Name);
-				WalkTo (newPos);
+
+			if (Money > 0) {
+				if (Input.GetKeyUp (KeyCode.Q)) {
+					BuyMovementPoints ();
+				}
+				if (Input.GetKeyUp (KeyCode.E)) {
+					BuyBuildingPoints ();
+				}
 			}
-			if (Input.GetKeyUp (KeyCode.D)) {
-				Vector3 newPos = GetMoveToTile ("right", Name);
-				WalkTo (newPos);
-			}
-			if (Input.GetKeyUp (KeyCode.Space)) {
-				PlaceBlock ();
-			}
+
 		}
     }
     
@@ -69,6 +87,21 @@ public class Player : MonoBehaviour
 	{
 		_currentLocation = newLocation;
 		this.transform.position = newLocation;
+	}
+
+	public void setLocation(Vector3 newLocation, bool isPlacingBlock)
+	{
+		StartCoroutine(JumpFromTo(_currentLocation, newLocation, 0.2f));
+		_currentLocation = newLocation;
+
+	}
+
+	public void setLocation(Vector3 newLocation, int animationIndex)
+	{
+		StartCoroutine(MoveFromTo(_currentLocation, newLocation, 0.4f, animationIndex));
+		//this.transform.position = Vector3.Lerp(_currentLocation, newLocation, Mathf.PingPong(Time.deltaTime, 1.0f));
+		_currentLocation = newLocation;
+		//this.transform.position = newLocation;
 	}
 
 	Vector2 CheckBehind()
@@ -230,29 +263,26 @@ public class Player : MonoBehaviour
 
 
 	void PlaceBlock(){
-		
-		Vector3 blockPlace = GetMoveToTile ("down", this.Name);
 
+			Vector3 blockPlace = GetMoveToTile ("down", this.Name);
+			Tile NeighborOwner = GetNeighborOwner (blockPlace);
 
-		Tile NeighborOwner = GetNeighborOwner (blockPlace);
-
-		if (this.Name == "Good") {
-			if (NeighborOwner.Player.Name == "Evil" || NeighborOwner.IsShadow) {
-				Block (blockPlace, NeighborOwner);
+			if (this.Name == "Good") {
+				if (NeighborOwner.Player.Name == "Evil" || NeighborOwner.IsShadow) {
+					Block (blockPlace, NeighborOwner);
+				} 
+			} else if (this.Name == "Evil") {
+				if (NeighborOwner.Player.Name == "Good" || NeighborOwner.IsShadow) {
+					Block (blockPlace, NeighborOwner);
+				}
 			}
-		} else if (this.Name == "Evil") {
-			if (NeighborOwner.Player.Name == "Good" || NeighborOwner.IsShadow) {
-				Block (blockPlace, NeighborOwner);
-			}
-		} 
-
 
 	}
 
 	void Block(Vector3 blockPlace, Tile NeighborOwner){
 
 		Vector3 bPlace = blockPlace;
-		if(NeighborOwner.IsShadow){
+		if (NeighborOwner.IsShadow) {
 			bool isShadow = true;
 			while (isShadow) {
 				Vector3 movePlace = GetMoveToTile ("down", this.Name, bPlace);
@@ -260,27 +290,41 @@ public class Player : MonoBehaviour
 				bPlace = movePlace;
 				if (!neigbor.IsShadow)
 					isShadow = false;
-				 
+				
 			}
-		}
+			TileSwitcher (bPlace);
 
+		} else if (NeighborOwner.StoneState > 0) {
+			NeighborOwner.SetStoneState (NeighborOwner.GetStoneState() - 1);
+		} else {
+			TileSwitcher (bPlace);
+		}
+			
+	}
+
+	void TileSwitcher(Vector3 bPlace){
 		Tile OtherTile = GetTile (bPlace);
 		Tile ThisTile = GetTile (_currentLocation);
 		OtherTile.SwitchOwner (this, true);
 		ThisTile.SwitchOwner (this, true);
 		AddShadow (OtherTile);
 		AddShadow (ThisTile);
-		setLocation (GetMoveToTile ("up", this.Name));
+		setLocation (GetMoveToTile ("up", this.Name), true);
+		BuildingPoints = BuildingPoints - 1;
 		CheckShadows();
+		uiManager.UpdateUI (this);
 	}
 
-	void WalkTo(Vector3 to){
+	void WalkTo(Vector3 to, int animationIndex){
 		bool newPosShadow = GetTile (to).IsShadow;
 		if (!newPosShadow) {
 			if (this.Name == GetNeighborOwner (to).Player.Name) {
-				setLocation (to);
+				setLocation (to, animationIndex);
+				MovementPoints = MovementPoints - 1;
+				uiManager.UpdateUI (this);
 			}
 		}
+
 	}
 
 	public void AddShadow(Tile tile){
@@ -383,4 +427,51 @@ public class Player : MonoBehaviour
 
 		}
 	}
+		
+	IEnumerator  MoveFromTo (Vector3 pointA, Vector3 pointB, float time, int animationIndex){
+		animator.SetInteger ("WalkingDication", animationIndex);
+
+		float t = 0f;
+		while (t < 1.0f) {
+			t += Time.deltaTime / time; // Sweeps from 0 to 1 in time seconds
+			transform.position = Vector3.Lerp(pointA, pointB, t); // Set position proportional to t
+			yield return null;         // Leave the routine and return here in the next frame
+		}
+		animator.SetInteger ("WalkingDication", 0);
+	}
+
+	IEnumerator  JumpFromTo (Vector3 pointA, Vector3 pointB, float time){
+		animator.SetBool ("PlacingBlock", true);
+
+		float t = 0f;
+		while (t < 1.0f) {
+			t += Time.deltaTime / time; // Sweeps from 0 to 1 in time seconds
+			transform.position = Vector3.Lerp(pointA, pointB, t); // Set position proportional to t
+			yield return null;         // Leave the routine and return here in the next frame
+		}
+
+		animator.SetBool ("PlacingBlock", false);
+	}
+
+	void BuyMovementPoints(){
+		int cost = 250;
+		if (this.Money >= cost) {
+			this.Money  = this.Money - cost;
+			this.MovementPoints = this.MovementPoints + 3;
+			uiManager.UpdateUI (this);
+		}
+
+	}
+
+	void BuyBuildingPoints(){
+		int cost = 175;
+		if (this.Money >= cost ) {
+			this.Money = this.Money - cost;
+			this.BuildingPoints = this.BuildingPoints + 1;
+			uiManager.UpdateUI (this);
+		}
+
+	}
+
+
 }

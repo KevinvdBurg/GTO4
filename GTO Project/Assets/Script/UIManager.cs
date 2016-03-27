@@ -7,13 +7,14 @@ public class UIManager : MonoBehaviour {
     //Update Turn
     //Update Points ( Building/ Movemet / Money )
 
-
     public Text TurnIndicator;
     public Text MP;
     public Text BP;
     public Text GP;
 
 	public Camera MCamera;
+
+	public GameObject Background;
 
 	// Use this for initialization
 	void Start () {
@@ -46,17 +47,21 @@ public class UIManager : MonoBehaviour {
     }
 
 	public void FlipCamera(string playerName){
-		if (playerName == "Good")
-			MCamera.transform.rotation = Quaternion.Euler(0,0,0);
-		else
+		if (playerName == "Good") {
+			MCamera.transform.rotation = Quaternion.Euler (0, 0, 0);
+			Background.transform.rotation = Quaternion.Euler (0, 0, 0);
+		} else {
 			MCamera.transform.rotation = Quaternion.Euler(0,0,180);
+			Background.transform.rotation = Quaternion.Euler (0, 0, 180);
+		}
+			
 	}
 
 	public void UpdateUI(Player updateUiPlayer)
 	{
-		MP.text = updateUiPlayer.MovementPoints + "";
-		BP.text = updateUiPlayer.BuildingPoints + "";
-		GP.text = updateUiPlayer.Money + "";
+		MP.text = "Movement: " + updateUiPlayer.MovementPoints;
+		BP.text = "Block: " + updateUiPlayer.BuildingPoints;
+		GP.text = "Gold: " + updateUiPlayer.Money;
 	}
 
 }

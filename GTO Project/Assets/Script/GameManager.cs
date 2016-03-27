@@ -9,8 +9,8 @@ using Object = UnityEngine.Object;
 public class GameManager : MonoBehaviour
 {
 
-    private const int Width = 15;
-    private const int Height = 22;
+    private const int Width = 5;
+    private const int Height = 10;
     private const int Cellsize = 4;
 
     public Camera MainCamera;
@@ -55,7 +55,12 @@ public class GameManager : MonoBehaviour
             {
                 if (j >= (Height/2))
                 {
-                    GridBlock(i, j, _goodPlayer);
+					if (j == (Height - 1)) {
+						GridBlock (i, j, _goodPlayer, true);
+					} else {
+						GridBlock (i, j, _goodPlayer, false); 
+					}
+
                     if (!_goodPlayer.OnStartPos)
                     {
 						_goodPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
@@ -65,7 +70,12 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    GridBlock(i, j, _evilPlayer);
+					if(j == 0)
+						GridBlock(i, j, _evilPlayer, true);
+					else
+						GridBlock(i, j, _evilPlayer, false);
+					
+					
 					if (j >= (Height / 2) - 1 && i >= Width - 1) {
 						if (!_evilPlayer.OnStartPos) {
 							_evilPlayer.setLocation (new Vector3 ((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
@@ -77,13 +87,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GridBlock(int i, int j, Player player)
+	void GridBlock(int i, int j, Player player, bool isStone)
     {
         Tile newTile = tilePrefab.GetComponent<Tile>();
         //newTile.ID = new int[2] {i,j};
 		newTile.Id = new Vector2 ((i * Cellsize) / 2, (j * Cellsize) / 2);
 		newTile.SetPlayer(player);
 		newTile.SetShadow(false);
+
+		if (isStone) {
+			newTile.SetStoneState (5);
+		} else {
+			newTile.SetStoneState (-1);
+		}
         
 
         newTile.transform.localScale = new Vector3(Cellsize, Cellsize, Cellsize);

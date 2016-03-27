@@ -47,6 +47,13 @@ public class TurnManager : MonoBehaviour {
         playerThatEndedTurn.Money += 100;
         playerThatEndedTurn.BuildingPoints += 5;
         playerThatEndedTurn.MovementPoints += 5;
+
+		if (playerThatEndedTurn.BuildingPoints > 20) {
+			playerThatEndedTurn.BuildingPoints = 20;
+		}
+		if (playerThatEndedTurn.MovementPoints > 20) {
+			playerThatEndedTurn.MovementPoints = 20;
+		}
         playerThatEndedTurn.HisTurn = false;
     }
 
