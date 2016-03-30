@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
 
 	public List<Tile> ShadowBlocks = new List<Tile>();
 	public Animator animator;
+
+	public bool DoneChecking = true;
 //	private int _currentCellSize;
 
 	public UIManager uiManager;
@@ -36,8 +38,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {		
-		if (HisTurn	)
-        {
+		CheckBehind ();
+		if (HisTurn) {
 			if (MovementPoints > 0) {
 				if (Input.GetKeyUp (KeyCode.W)) {
 					Vector3 newPos = GetMoveToTile ("up", Name);
@@ -54,12 +56,12 @@ public class Player : MonoBehaviour
 				if (Input.GetKeyUp (KeyCode.A)) {
 					Vector3 newPos = GetMoveToTile ("left", Name);
 					WalkTo (newPos, 4);
-
 				}
 			}
 			if (BuildingPoints > 0) {
 				if (Input.GetKeyUp (KeyCode.Space)) {
 					PlaceBlock ();
+
 				}
 			}
 
@@ -71,7 +73,6 @@ public class Player : MonoBehaviour
 					BuyBuildingPoints ();
 				}
 			}
-
 		}
     }
     
@@ -104,7 +105,7 @@ public class Player : MonoBehaviour
 		//this.transform.position = newLocation;
 	}
 
-	Vector2 CheckBehind()
+	public Tile CheckBehind()
 	{
 		var back = transform.TransformDirection(Vector3.back);
 		//note the use of var as the type. This is because in c# you 
@@ -114,10 +115,14 @@ public class Player : MonoBehaviour
 
 		if (Physics.Raycast (transform.position, -back, out hit, 4)) {
 			//Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
-			Vector2 TileID = hit.collider.gameObject.GetComponent<Tile> ().Id;
+			Tile TileID = hit.collider.gameObject.GetComponent<Tile> ();
+			if (TileID.Player.Name != this.Name) {
+				Vector3 newPos = GetMoveToTile ("up", Name);
+				WalkTo (newPos, 1);
+			}
 			return TileID;
 		} else {
-			return Vector2.zero;
+			return null;
 		}
 	}
 
@@ -275,55 +280,98 @@ public class Player : MonoBehaviour
 				if (NeighborOwner.Player.Name == "Good" || NeighborOwner.IsShadow) {
 					Block (blockPlace, NeighborOwner);
 				}
-			}
-
+			} 
 	}
 
 	void Block(Vector3 blockPlace, Tile NeighborOwner){
+ 		if (GetTile(_currentLocation).StoneState >= 0) {
+			Vector3 bPlace = blockPlace;
+			if (NeighborOwner.Player.Name != this.Name) {
+				bool isOwner = false;
+				while (!isOwner) {
+					Vector3 movePlace = GetMoveToTile ("down", this.Name, bPlace);
+					Debug.Log (GetTile (movePlace).Player.Name);
+					isOwner = true;
+				}
+				SwitchTile (GetTile(bPlace), true);
 
-		Vector3 bPlace = blockPlace;
-		if (NeighborOwner.IsShadow) {
-			bool isShadow = true;
-			while (isShadow) {
-				Vector3 movePlace = GetMoveToTile ("down", this.Name, bPlace);
-				Tile neigbor = GetNeighborOwner (movePlace);
-				bPlace = movePlace;
-				if (!neigbor.IsShadow)
-					isShadow = false;
-				
+
+			} else if (NeighborOwner.IsShadow) {
+				bool isShadow = true;
+				while (isShadow) {
+					Vector3 movePlace = GetMoveToTile ("down", this.Name, bPlace);
+					Tile neigbor = GetNeighborOwner (movePlace);
+					bPlace = movePlace;
+					if (!neigbor.IsShadow)
+						isShadow = false;
+				}
+				SwitchTile (GetTile(bPlace), true);
+
 			}
-			TileSwitcher (bPlace);
-
-		} else if (NeighborOwner.StoneState > 0) {
-			NeighborOwner.SetStoneState (NeighborOwner.GetStoneState() - 1);
+			CheckShadows();
 		} else {
-			TileSwitcher (bPlace);
-		}
-			
+			Vector3 bPlace = blockPlace;
+ 			if (NeighborOwner.IsShadow) {
+				bool isShadow = true;
+				while (isShadow) {
+					Vector3 movePlace = GetMoveToTile ("down", this.Name, bPlace);
+					Tile neigbor = GetNeighborOwner (movePlace);
+					bPlace = movePlace;
+					if (!neigbor.IsShadow)
+						isShadow = false;
+
+				}
+				TileSwitcher (bPlace);
+
+			} else if (NeighborOwner.StoneState > 0) {
+				SpendBuildingPoints ();
+				NeighborOwner.SetStoneState (NeighborOwner.GetStoneState () - 1);
+			} else if (NeighborOwner.StoneState == 0) {
+				SpendBuildingPoints ();
+			}
+			else {
+				TileSwitcher (bPlace);
+			}
+		}	
 	}
 
 	void TileSwitcher(Vector3 bPlace){
 		Tile OtherTile = GetTile (bPlace);
 		Tile ThisTile = GetTile (_currentLocation);
-		OtherTile.SwitchOwner (this, true);
-		ThisTile.SwitchOwner (this, true);
-		AddShadow (OtherTile);
-		AddShadow (ThisTile);
+		if (OtherTile.StoneState >= 0) {
+			OtherTile.SetStoneState (OtherTile.GetStoneState () - 1);
+		} else {
+			SwitchTile (OtherTile, true);
+		}
+
+		SwitchTile (ThisTile, true);
 		setLocation (GetMoveToTile ("up", this.Name), true);
-		BuildingPoints = BuildingPoints - 1;
 		CheckShadows();
-		uiManager.UpdateUI (this);
+		SpendBuildingPoints ();
+	}
+
+	void SwitchTile(Tile switchTile, bool setShadow){
+		if (setShadow) {
+			switchTile.SwitchOwner (this, true);
+			AddShadow (switchTile);
+		} else {
+			switchTile.SwitchOwner (this, false);
+		}
+
+
 	}
 
 	void WalkTo(Vector3 to, int animationIndex){
-		bool newPosShadow = GetTile (to).IsShadow;
-		if (!newPosShadow) {
-			if (this.Name == GetNeighborOwner (to).Player.Name) {
-				setLocation (to, animationIndex);
-				MovementPoints = MovementPoints - 1;
-				uiManager.UpdateUI (this);
+		if (GetTile (to) != null) {
+			bool newPosShadow = GetTile (to).IsShadow;
+			if (!newPosShadow) {
+				if (this.Name == GetNeighborOwner (to).Player.Name) {
+					setLocation (to, animationIndex);
+					SpendMovementPoints ();
+				}
 			}
 		}
+
 
 	}
 
@@ -473,5 +521,17 @@ public class Player : MonoBehaviour
 
 	}
 
+	void SpendBuildingPoints(){
+		BuildingPoints = BuildingPoints - 1;
+		uiManager.UpdateUI (this);
+	}
 
+	void SpendMovementPoints(){
+		MovementPoints = MovementPoints - 1;
+		uiManager.UpdateUI (this);
+	}
+
+	public Vector2 toVector2 (Vector3 v) {
+		return new Vector2 (v.y, v.z);
+	}
 }

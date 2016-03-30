@@ -11,7 +11,7 @@ namespace Assets
 		public static Color GoodStoneState3 = new Color32(83, 139, 145, 220);
 		public static Color GoodStoneState2 = new Color32(95, 130, 134, 220);
 		public static Color GoodStoneState1 = new Color32(106, 121, 122, 220);
-		public static Color GoodStoneState0 = new Color32(19, 89, 93, 220);
+		public static Color GoodStoneState0 = new Color32(58, 62, 68, 220);
 
 		public static Color Evil = new Color32(239, 154, 154, 200);
 		public static Color EvilShadow = new Color32(183, 28, 28, 200);
