@@ -4,21 +4,26 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour {
 
-    //Update Turn
-    //Update Points ( Building/ Movemet / Money )
 
     public Text TurnIndicator;
     public Text MP;
     public Text BP;
     public Text GP;
+	public Text BPCostText;
+	public Text MPCostText;
+
+	public int BPcost;
+	public int MPcost;
 
 	public Camera MCamera;
 
 	public GameObject Background;
 
+	public GameObject CostPanel;
+
 	// Use this for initialization
 	void Start () {
-	
+		UpdateStaticUI ();
 	}
 	
 	// Update is called once per frame
@@ -49,19 +54,63 @@ public class UIManager : MonoBehaviour {
 	public void FlipCamera(string playerName){
 		if (playerName == "Good") {
 			MCamera.transform.rotation = Quaternion.Euler (0, 0, 0);
-			Background.transform.rotation = Quaternion.Euler (0, 0, 0);
+			//Background.transform.rotation = Quaternion.Euler (0, 0, 0);
 		} else {
 			MCamera.transform.rotation = Quaternion.Euler(0,0,180);
-			Background.transform.rotation = Quaternion.Euler (0, 0, 180);
+			//Background.transform.rotation = Quaternion.Euler (0, 0, 180);
 		}
 			
 	}
 
+	void UpdateStaticUI(){
+		BPCostText.text = "E : " + BPcost;
+		MPCostText.text = "Q : " + MPcost;
+	}
+
 	public void UpdateUI(Player updateUiPlayer)
 	{
-		MP.text = "Movement: " + updateUiPlayer.MovementPoints;
-		BP.text = "Block: " + updateUiPlayer.BuildingPoints;
-		GP.text = "Gold: " + updateUiPlayer.Money;
+		
+		MP.text = " " + updateUiPlayer.MovementPoints;
+		BP.text = " " + updateUiPlayer.BuildingPoints;
+		GP.text = " " + updateUiPlayer.Money;
+	}
+
+	public void BuyMovementPoints(Player player){
+		int cost = MPcost;
+		if (player.Money >= cost) {
+			player.Money  = player.Money - cost;
+			player.MovementPoints = player.MovementPoints + 3;
+			UpdateUI (player);
+		}
+
+	}
+
+	public void BuyBuildingPoints(Player player){
+		int cost = BPcost;
+		if (player.Money >= cost ) {
+			player.Money = player.Money - cost;
+			player.BuildingPoints = player.BuildingPoints + 1;
+			UpdateUI (player);
+		}
+
+	}
+
+	public void SpendBuildingPoints(Player player){
+		player.BuildingPoints = player.BuildingPoints - 1;
+		UpdateUI (player);
+	}
+
+	public void SpendMovementPoints(Player player){
+		player.MovementPoints = player.MovementPoints - 1;
+		UpdateUI (player);
+	}
+
+	public void ToggleCostPanel(bool open){
+		if (open) {
+			CostPanel.SetActive (true);
+		}else{
+			CostPanel.SetActive (false);
+		}
 	}
 
 }

@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
 
 	public UIManager uiManager;
 
+	public ParticleSystem PSystem;
+
 
 
     // Use this for initialization
@@ -67,10 +69,10 @@ public class Player : MonoBehaviour
 
 			if (Money > 0) {
 				if (Input.GetKeyUp (KeyCode.Q)) {
-					BuyMovementPoints ();
+					uiManager.BuyMovementPoints (this);
 				}
 				if (Input.GetKeyUp (KeyCode.E)) {
-					BuyBuildingPoints ();
+					uiManager.BuyBuildingPoints (this);
 				}
 			}
 		}
@@ -275,6 +277,7 @@ public class Player : MonoBehaviour
 			if (this.Name == "Good") {
 				if (NeighborOwner.Player.Name == "Evil" || NeighborOwner.IsShadow) {
 					Block (blockPlace, NeighborOwner);
+
 				} 
 			} else if (this.Name == "Evil") {
 				if (NeighborOwner.Player.Name == "Good" || NeighborOwner.IsShadow) {
@@ -294,8 +297,6 @@ public class Player : MonoBehaviour
 					isOwner = true;
 				}
 				SwitchTile (GetTile(bPlace), true);
-
-
 			} else if (NeighborOwner.IsShadow) {
 				bool isShadow = true;
 				while (isShadow) {
@@ -324,10 +325,10 @@ public class Player : MonoBehaviour
 				TileSwitcher (bPlace);
 
 			} else if (NeighborOwner.StoneState > 0) {
-				SpendBuildingPoints ();
+				uiManager.SpendBuildingPoints (this);
 				NeighborOwner.SetStoneState (NeighborOwner.GetStoneState () - 1);
 			} else if (NeighborOwner.StoneState == 0) {
-				SpendBuildingPoints ();
+				uiManager.SpendBuildingPoints (this);
 			}
 			else {
 				TileSwitcher (bPlace);
@@ -347,12 +348,15 @@ public class Player : MonoBehaviour
 		SwitchTile (ThisTile, true);
 		setLocation (GetMoveToTile ("up", this.Name), true);
 		CheckShadows();
-		SpendBuildingPoints ();
+		uiManager.SpendBuildingPoints (this);
 	}
 
 	void SwitchTile(Tile switchTile, bool setShadow){
 		if (setShadow) {
 			switchTile.SwitchOwner (this, true);
+			PSystem.transform.position = switchTile.transform.position;
+			//PSystem.Emit (30);
+			StartCoroutine(FadeParticles(PSystem, 1.0f));
 			AddShadow (switchTile);
 		} else {
 			switchTile.SwitchOwner (this, false);
@@ -367,7 +371,7 @@ public class Player : MonoBehaviour
 			if (!newPosShadow) {
 				if (this.Name == GetNeighborOwner (to).Player.Name) {
 					setLocation (to, animationIndex);
-					SpendMovementPoints ();
+					uiManager.SpendMovementPoints (this);
 				}
 			}
 		}
@@ -477,7 +481,7 @@ public class Player : MonoBehaviour
 	}
 		
 	IEnumerator  MoveFromTo (Vector3 pointA, Vector3 pointB, float time, int animationIndex){
-		animator.SetInteger ("WalkingDication", animationIndex);
+		animator.SetInteger ("WalkingDirection", animationIndex);
 
 		float t = 0f;
 		while (t < 1.0f) {
@@ -485,7 +489,7 @@ public class Player : MonoBehaviour
 			transform.position = Vector3.Lerp(pointA, pointB, t); // Set position proportional to t
 			yield return null;         // Leave the routine and return here in the next frame
 		}
-		animator.SetInteger ("WalkingDication", 0);
+		animator.SetInteger ("WalkingDirection", 0);
 	}
 
 	IEnumerator  JumpFromTo (Vector3 pointA, Vector3 pointB, float time){
@@ -501,34 +505,14 @@ public class Player : MonoBehaviour
 		animator.SetBool ("PlacingBlock", false);
 	}
 
-	void BuyMovementPoints(){
-		int cost = 250;
-		if (this.Money >= cost) {
-			this.Money  = this.Money - cost;
-			this.MovementPoints = this.MovementPoints + 3;
-			uiManager.UpdateUI (this);
+	IEnumerator FadeParticles(ParticleSystem particle, float time){
+		float t = 0f;
+		PSystem.gameObject.SetActive(true);
+		while (t < 1.0f) {
+			t += Time.deltaTime / time; // Sweeps from 0 to 1 in time seconds
+			yield return null;         // Leave the routine and return here in the next frame
 		}
-
-	}
-
-	void BuyBuildingPoints(){
-		int cost = 175;
-		if (this.Money >= cost ) {
-			this.Money = this.Money - cost;
-			this.BuildingPoints = this.BuildingPoints + 1;
-			uiManager.UpdateUI (this);
-		}
-
-	}
-
-	void SpendBuildingPoints(){
-		BuildingPoints = BuildingPoints - 1;
-		uiManager.UpdateUI (this);
-	}
-
-	void SpendMovementPoints(){
-		MovementPoints = MovementPoints - 1;
-		uiManager.UpdateUI (this);
+		PSystem.gameObject.SetActive(false);
 	}
 
 	public Vector2 toVector2 (Vector3 v) {

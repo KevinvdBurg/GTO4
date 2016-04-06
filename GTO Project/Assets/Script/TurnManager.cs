@@ -36,7 +36,12 @@ public class TurnManager : MonoBehaviour {
     {
         playerThatStartedTurn.HisTurn = true;
 		string playerName = playerThatStartedTurn.Name;
-		UIManager.TurnIndicator.text = playerName;
+		if (playerName == "Good") {
+			UIManager.TurnIndicator.text = "Bunny Link";
+		} else {
+			UIManager.TurnIndicator.text = "Daku Link";
+		}
+
 		UIManager.FlipCamera (playerName);
 		UIManager.UpdateUI(playerThatStartedTurn);
     }

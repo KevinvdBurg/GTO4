@@ -8,9 +8,9 @@ using Object = UnityEngine.Object;
 
 public class GameManager : MonoBehaviour
 {
-
-    private const int Width = 5;
-    private const int Height = 10;
+	private Settings settings;
+    private int Width = 5;
+	private int Height = 14;
     private const int Cellsize = 4;
 
     public Camera MainCamera;
@@ -26,9 +26,24 @@ public class GameManager : MonoBehaviour
 	private List<Player> _playerList = new List<Player>();
     public GameObject TheGrid;
     public List<GameObject> Tiles; 
+	public AchievementManager AchievementManager;
 
     // Use this for initialization
     void Start () {
+
+
+		GameObject SettingsObject = GameObject.FindGameObjectWithTag ("Settings");
+
+		if (SettingsObject != null) {
+			settings = SettingsObject.GetComponent <Settings>();
+			Width = settings.PlayfieldWidth;
+			Height = settings.PlayfieldHeight;
+		}
+		if (SettingsObject == null) {
+			Debug.Log ("Cannot find Settings -- Going with default Values");
+		}
+
+
         instance = this;
        
         _goodPlayer = GoGoodPlayer.GetComponent<Player>();
@@ -36,15 +51,21 @@ public class GameManager : MonoBehaviour
 		_playerList.Add(_goodPlayer);
 		_playerList.Add(_evilPlayer);
 
-        float camX = ((Width * Cellsize) /4) ;
+        float camX = ((Width * Cellsize) / 4) ;
         float camy = ((Height * Cellsize) /4);
+
         MainCamera.transform.localPosition = new Vector3(camX, camy, -25);
         GenGrid();
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if (Input.GetKeyUp (KeyCode.T)) {
+			AchievementManager.AchievementGet ("Hoi");
+		}
+		if (Input.GetKeyUp (KeyCode.M)) {
+			AchievementManager.AchievementGet ("Milton");
+		}
     }
 
     void GenGrid()
