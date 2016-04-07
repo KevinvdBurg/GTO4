@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
 
 	public Text WinnerText;
 	public GameObject GameoverOverview;
-	public Text DakuBlock;
+	public Text DekuBlock;
 	public Text BunnyBlock;
 
 
@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
 	void CreateGameoverScreen(Player playerWhoWon){
 		GameoverOverview.SetActive (true);
 		WinnerText.text = "Winner: " + playerWhoWon.Name;
-		DakuBlock.text = GetBlockAmount (_evilPlayer) + "";
+		DekuBlock.text = GetBlockAmount (_evilPlayer) + "";
 		BunnyBlock.text = GetBlockAmount (_goodPlayer) + "";
 	}
 
