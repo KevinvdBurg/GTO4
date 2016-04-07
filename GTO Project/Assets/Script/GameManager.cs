@@ -69,12 +69,6 @@ public class GameManager : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyUp (KeyCode.T)) {
-			AchievementManager.AchievementGet ("Hoi");
-		}
-		if (Input.GetKeyUp (KeyCode.M)) {
-			AchievementManager.AchievementGet ("Milton");
-		}
     }
 
     void GenGrid()
@@ -166,6 +160,7 @@ public class GameManager : MonoBehaviour
 
 	void CreateGameoverScreen(Player playerWhoWon){
 		GameoverOverview.SetActive (true);
+		AchievementManager.AchievementGet ("Winner");
 		WinnerText.text = "Winner: " + playerWhoWon.Name;
 		DekuBlock.text = GetBlockAmount (_evilPlayer) + "";
 		BunnyBlock.text = GetBlockAmount (_goodPlayer) + "";

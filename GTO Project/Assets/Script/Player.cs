@@ -90,6 +90,7 @@ public class Player : MonoBehaviour
     }
 
 	public void BreakStone(){
+		
 		this.currentStone -= 1;
 
 		int min = (int)(maxStone * 0.80);
@@ -117,6 +118,10 @@ public class Player : MonoBehaviour
 
 	public void setLocation(Vector3 newLocation, int animationIndex)
 	{
+		if(this.Name == "Evil")
+			GameManager.instance.AchievementManager.AchievementGet ("Move as Deku");
+		else if(this.Name == "Good")
+			GameManager.instance.AchievementManager.AchievementGet ("Move as Bunny");
 		StartCoroutine(MoveFromTo(_currentLocation, newLocation, 0.4f, animationIndex));
 		//this.transform.position = Vector3.Lerp(_currentLocation, newLocation, Mathf.PingPong(Time.deltaTime, 1.0f));
 		_currentLocation = newLocation;
@@ -293,11 +298,12 @@ public class Player : MonoBehaviour
 			if (this.Name == "Good") {
 				if (NeighborOwner.Player.Name == "Evil" || NeighborOwner.IsShadow) {
 					Block (blockPlace, NeighborOwner);
-
+					GameManager.instance.AchievementManager.AchievementGet ("Steal as Bunny");
 				} 
 			} else if (this.Name == "Evil") {
 				if (NeighborOwner.Player.Name == "Good" || NeighborOwner.IsShadow) {
 					Block (blockPlace, NeighborOwner);
+					GameManager.instance.AchievementManager.AchievementGet ("Steal as Deku");
 				}
 			} 
 	}
@@ -388,6 +394,8 @@ public class Player : MonoBehaviour
 				if (this.Name == GetNeighborOwner (to).Player.Name) {
 					setLocation (to, animationIndex);
 					uiManager.SpendMovementPoints (this);
+
+
 				}
 			}
 		}

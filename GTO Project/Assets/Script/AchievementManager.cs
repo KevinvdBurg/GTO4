@@ -15,8 +15,13 @@ public class AchievementManager : MonoBehaviour {
 		AchievementPanel.CrossFadeAlpha(0f, 0f, true);
 		AchievementText.CrossFadeAlpha(0f, 0f, true);
 		AchievementList = new List<GameAchievement>();
-		AchievementList.Add(new GameAchievement ("Hoi", 10));
-		AchievementList.Add(new GameAchievement ("Milton", 10));
+		AchievementList.Add(new GameAchievement ("Destoy Wallpiece as Deku", 50));
+		AchievementList.Add(new GameAchievement ("Destoy Wallpiece as Bunny", 50));
+		AchievementList.Add(new GameAchievement ("Move as Deku", 10));
+		AchievementList.Add(new GameAchievement ("Move as Bunny", 10));
+		AchievementList.Add(new GameAchievement ("Steal as Deku", 10));
+		AchievementList.Add(new GameAchievement ("Steal as Bunny", 10));
+		AchievementList.Add(new GameAchievement ("Winner", 100));
 	}
 	
 	// Update is called once per frame
@@ -43,7 +48,7 @@ public class AchievementManager : MonoBehaviour {
 		}
 		AchievementPanel.CrossFadeAlpha(0f, 1f, true);
 		AchievementText.CrossFadeAlpha(0f, 1f, true);
-		//achievement.isActive = false;
+		achievement.isActive = false;
 	}
 
 
