@@ -16,7 +16,7 @@ public class Settings : MonoBehaviour {
 	private bool Spawned = false;
 	public float VersionNr;
 
-	[Range(5, 16)]
+	[Range(4, 20)]
 	public int PlayfieldWidth = 5;
 	[Range(6, 16)]
 	public int PlayfieldHeight = 14;

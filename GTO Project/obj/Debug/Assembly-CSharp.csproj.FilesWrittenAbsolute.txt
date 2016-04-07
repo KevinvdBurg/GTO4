@@ -15,3 +15,5 @@
 /Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/kvdb/Documents/Codes/GTO4/GTO Project/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb

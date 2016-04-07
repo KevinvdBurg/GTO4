@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Assets;
 using UnityEditor;
 using Object = UnityEngine.Object;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +29,13 @@ public class GameManager : MonoBehaviour
     public GameObject TheGrid;
     public List<GameObject> Tiles; 
 	public AchievementManager AchievementManager;
+
+	public Text WinnerText;
+	public GameObject GameoverOverview;
+	public Text DakuBlock;
+	public Text BunnyBlock;
+
+
 
     // Use this for initialization
     void Start () {
@@ -76,14 +85,13 @@ public class GameManager : MonoBehaviour
             {
                 if (j >= (Height/2))
                 {
-					if (j == (Height - 1)) {
+					if (j == (Height - 1)) 
 						GridBlock (i, j, _goodPlayer, true);
-					} else {
+					else 
 						GridBlock (i, j, _goodPlayer, false); 
-					}
 
-                    if (!_goodPlayer.OnStartPos)
-                    {
+
+                    if (!_goodPlayer.OnStartPos){
 						_goodPlayer.setLocation (new Vector3((i * Cellsize) / 2, (j * Cellsize) / 2, -2));
 						_goodPlayer.OnStartPos = true;
                     }
@@ -118,6 +126,8 @@ public class GameManager : MonoBehaviour
 
 		if (isStone) {
 			newTile.SetStoneState (5);
+			player.maxStone += 1;
+			player.currentStone += 1;
 		} else {
 			newTile.SetStoneState (-1);
 		}
@@ -139,6 +149,43 @@ public class GameManager : MonoBehaviour
             return _evilPlayer;
         return null;
     }
+
+	public void CheckGameover(Player player){
+		if (player.Name == _goodPlayer.Name) {
+			CreateGameoverScreen(_evilPlayer);
+			_goodPlayer.HisTurn = false;
+			_evilPlayer.HisTurn = false;
+		} else if (player.Name == _evilPlayer.Name) {
+			CreateGameoverScreen(_goodPlayer);
+			_goodPlayer.HisTurn = false;
+			_evilPlayer.HisTurn = false;
+		} else {
+			Debug.Log ("Error! The player is not right");
+		}
+	}
+
+	void CreateGameoverScreen(Player playerWhoWon){
+		GameoverOverview.SetActive (true);
+		WinnerText.text = "Winner: " + playerWhoWon.Name;
+		DakuBlock.text = GetBlockAmount (_evilPlayer) + "";
+		BunnyBlock.text = GetBlockAmount (_goodPlayer) + "";
+	}
+
+	public void BackToMainMenu(){
+		SceneManager.LoadScene ("MainMenu");
+	}
+
+	int GetBlockAmount(Player player){
+		int count = 0;
+
+		foreach (GameObject tile in Tiles) {
+			Tile t = tile.GetComponent<Tile>();
+			if (t.Player.Name == player.Name) {
+				count += 1;
+			}
+		}
+		return count;
+	}
 
 	public int GetCellsize(){
 		return Cellsize;

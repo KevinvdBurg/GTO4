@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System;
 
 public class Player : MonoBehaviour
 {
@@ -24,17 +25,20 @@ public class Player : MonoBehaviour
 
 	public bool DoneChecking = true;
 //	private int _currentCellSize;
-
 	public UIManager uiManager;
-
 	public ParticleSystem PSystem;
 
-
+	[HideInInspector]
+	public bool GameOver = false;
+	[HideInInspector]
+	public int maxStone;
+	[HideInInspector]
+	public int currentStone;
 
     // Use this for initialization
     void Start()
     {
-		//_currentCellSize = 4;
+		
     }
 
     // Update is called once per frame
@@ -85,6 +89,18 @@ public class Player : MonoBehaviour
                ", Money: " + Money + ", HisTurn: " + HisTurn;
     }
 
+	public void BreakStone(){
+		this.currentStone -= 1;
+
+		int min = (int)(maxStone * 0.80);
+		int maxMin = (maxStone - min);
+		if (currentStone <= maxMin) {
+			this.GameOver = true;
+			GameManager.instance.CheckGameover (this);
+		} else {
+			Debug.Log("Not There yet - " + Name);
+		}
+	}
 
 	public void setLocation(Vector3 newLocation)
 	{

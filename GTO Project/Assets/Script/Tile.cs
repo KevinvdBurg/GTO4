@@ -125,6 +125,7 @@ public class Tile : MonoBehaviour
 			} else if (StoneState == 0) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.GoodStoneState0;
 				this.StoneState = 0;
+				Player.BreakStone ();
 			} else {
 				this.StoneState = -1;
 			}
@@ -150,6 +151,7 @@ public class Tile : MonoBehaviour
 			} else if (StoneState == 0) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.EvilStoneState0;
 				this.StoneState = 0;
+				Player.BreakStone ();
 			} else {
 				this.StoneState = -1;
 			}
