@@ -44,7 +44,6 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {		
-		CheckBehind ();
 		if (HisTurn) {
 			if (MovementPoints > 0) {
 				if (Input.GetKeyUp (KeyCode.W)) {
@@ -79,6 +78,8 @@ public class Player : MonoBehaviour
 					uiManager.BuyBuildingPoints (this);
 				}
 			}
+		} else {
+			CheckBehind ();
 		}
     }
     
@@ -90,7 +91,7 @@ public class Player : MonoBehaviour
     }
 
 	public void BreakStone(){
-		
+		GameManager.instance.AchievementManager.AchievementGet ("Destoy Wallpiece Deku");
 		this.currentStone -= 1;
 
 		int min = (int)(maxStone * 0.80);
@@ -131,11 +132,15 @@ public class Player : MonoBehaviour
 	public Tile CheckBehind()
 	{
 		var back = transform.TransformDirection(Vector3.back);
+//		if (this.Name = "Evil") {
+//			back = back;
+//		}
 		//note the use of var as the type. This is because in c# you 
 		// can have lamda functions which open up the use of untyped variables
 		//these variables can only live INSIDE a function. 
 		RaycastHit hit;
-
+		Debug.DrawRay(transform.position, -back, Color.red);
+		//Debug.DrawLine (transform.position, -back, Color.red);
 		if (Physics.Raycast (transform.position, -back, out hit, 4)) {
 			//Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
 			Tile TileID = hit.collider.gameObject.GetComponent<Tile> ();
