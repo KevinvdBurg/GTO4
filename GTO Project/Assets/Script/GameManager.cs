@@ -34,7 +34,9 @@ public class GameManager : MonoBehaviour
 	public GameObject GameoverOverview;
 	public Text DekuBlock;
 	public Text BunnyBlock;
-
+	public GameObject Rupees;
+	public GameObject RupeePrefab;
+	public List<GameObject> RupeeList;
 
 
     // Use this for initialization
@@ -69,6 +71,9 @@ public class GameManager : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetKeyUp (KeyCode.R)) {
+			SpawnRandomRupee ();
+		}
     }
 
     void GenGrid()
@@ -180,6 +185,22 @@ public class GameManager : MonoBehaviour
 			}
 		}
 		return count;
+	}
+
+	public void SpawnRandomRupee(){
+		Tile t = Tiles [UnityEngine.Random.Range (0, Tiles.Count)].GetComponent<Tile>();
+		GameObject rp = (GameObject)Instantiate (RupeePrefab, new Vector3(t.Id.x, t.Id.y, -1), Quaternion.identity);
+		RupeeList.Add (rp);
+		rp.transform.SetParent (Rupees.transform);
+	}
+
+	public void ClearLeftoverRupees(){
+		foreach (GameObject rupee in RupeeList) {
+			Rupee r = rupee.GetComponent<Rupee>();
+			if (!r.isActive) {
+				Destroy (rupee);
+			}
+		}
 	}
 
 	public int GetCellsize(){

@@ -23,6 +23,9 @@ public class TurnManager : MonoBehaviour {
 	    if (Input.GetKeyDown("f"))
 	    {
 	        EndTurn(GetPlayerTurn(true));
+			for (int i = 0; i < Random.Range(1, 5); i++) {
+				GameManager.instance.SpawnRandomRupee ();
+			}
 	    }
 	}
 

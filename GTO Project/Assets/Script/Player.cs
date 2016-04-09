@@ -43,7 +43,8 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {		
+    {	
+		CheckBehind ();	
 		if (HisTurn) {
 			if (MovementPoints > 0) {
 				if (Input.GetKeyUp (KeyCode.W)) {
@@ -78,8 +79,6 @@ public class Player : MonoBehaviour
 					uiManager.BuyBuildingPoints (this);
 				}
 			}
-		} else {
-			CheckBehind ();
 		}
     }
     
@@ -129,7 +128,7 @@ public class Player : MonoBehaviour
 		//this.transform.position = newLocation;
 	}
 
-	public Tile CheckBehind()
+	public GameObject CheckBehind()
 	{
 		var back = transform.TransformDirection(Vector3.back);
 //		if (this.Name = "Evil") {
@@ -143,12 +142,23 @@ public class Player : MonoBehaviour
 		//Debug.DrawLine (transform.position, -back, Color.red);
 		if (Physics.Raycast (transform.position, -back, out hit, 4)) {
 			//Debug.Log (hit.collider.gameObject.GetComponent<Tile> ().Id.ToString ());
-			Tile TileID = hit.collider.gameObject.GetComponent<Tile> ();
-			if (TileID.Player.Name != this.Name) {
-				Vector3 newPos = GetMoveToTile ("up", Name);
-				WalkTo (newPos, 1);
+			GameObject HitObject = hit.collider.gameObject;
+			if (HitObject.GetComponent<Rupee>() != null) {
+				
+				Rupee RupeeID = HitObject.GetComponent<Rupee> ();
+				if (RupeeID.isActive) {
+					Money += RupeeID.CollectRupee ();
+					uiManager.UpdateUI (this);
+				}
+
+			} else if (HitObject.GetComponent<Tile>() != null) {
+				Tile TileID = HitObject.GetComponent<Tile> ();
+				if (TileID.Player.Name != this.Name) {
+					Vector3 newPos = GetMoveToTile ("up", Name);
+					WalkTo (newPos, 1);
+				}
 			}
-			return TileID;
+			return HitObject;
 		} else {
 			return null;
 		}
@@ -399,8 +409,6 @@ public class Player : MonoBehaviour
 				if (this.Name == GetNeighborOwner (to).Player.Name) {
 					setLocation (to, animationIndex);
 					uiManager.SpendMovementPoints (this);
-
-
 				}
 			}
 		}

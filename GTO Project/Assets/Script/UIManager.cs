@@ -101,7 +101,11 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SpendMovementPoints(Player player){
-		player.MovementPoints = player.MovementPoints - 1;
+		if (player.MovementPoints <= 0) {
+			player.MovementPoints = 0;
+		} else {
+			player.MovementPoints -= 1;
+		}
 		UpdateUI (player);
 	}
 

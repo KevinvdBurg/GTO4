@@ -73,9 +73,9 @@ public class Tile : MonoBehaviour
     }
 		
 
-	public void OnMouseUp(){
-		OnPClick ();
-	}
+//	public void OnMouseUp(){
+//		OnPClick ();
+//	}
 
 	public void OnPClick(){
 		this.GetComponent<SpriteRenderer>().color = GameColor.Error;

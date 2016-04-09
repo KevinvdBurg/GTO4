@@ -24,5 +24,15 @@ namespace Assets
 
         public static Color Error = new Color32(33, 33, 33, 255);
 
+		public static Color RupeeGreen = new Color32(141, 217, 118, 255);
+		public static Color RupeeBlue = new Color32(111, 134, 219, 255);
+		public static Color RupeeRed = new Color32(213, 78, 76, 255);
+		public static Color RupeePurple = new Color32(129, 101, 160, 255);
+		public static Color RupeeOrange = new Color32(221, 150, 77, 255);
+		public static Color RupeeSilver = new Color32(240, 240, 240, 255);
+
+		public static Color Transparent = new Color32(0, 0, 0, 0);
+
+
     }
 }
