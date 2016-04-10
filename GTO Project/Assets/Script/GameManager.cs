@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Assets;
-using UnityEditor;
 using Object = UnityEngine.Object;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
