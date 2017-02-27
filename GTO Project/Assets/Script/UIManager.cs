@@ -51,16 +51,16 @@ public class UIManager : MonoBehaviour {
         GP.text = gp;
     }
 
-	public void FlipCamera(string playerName){
-		if (playerName == "Good") {
-			MCamera.transform.rotation = Quaternion.Euler (0, 0, 0);
-			//Background.transform.rotation = Quaternion.Euler (0, 0, 0);
-		} else {
-			MCamera.transform.rotation = Quaternion.Euler(0,0,180);
-			//Background.transform.rotation = Quaternion.Euler (0, 0, 180);
+		public void FlipCamera(string playerName){
+			if (playerName == "Good") {
+				MCamera.transform.rotation = Quaternion.Euler (0, 0, 0);
+				//Background.transform.rotation = Quaternion.Euler (0, 0, 0);
+			} else {
+				MCamera.transform.rotation = Quaternion.Euler(0,0,180);
+				//Background.transform.rotation = Quaternion.Euler (0, 0, 180);
+			}
+				
 		}
-			
-	}
 
 	void UpdateStaticUI(){
 		BPCostText.text = "E : " + BPcost;
@@ -80,6 +80,7 @@ public class UIManager : MonoBehaviour {
 		if (player.Money >= cost) {
 			player.Money  = player.Money - cost;
 			player.MovementPoints = player.MovementPoints + 3;
+			GameManager.instance.PlayEffect (7);
 			UpdateUI (player);
 		}
 
@@ -90,6 +91,7 @@ public class UIManager : MonoBehaviour {
 		if (player.Money >= cost ) {
 			player.Money = player.Money - cost;
 			player.BuildingPoints = player.BuildingPoints + 1;
+			GameManager.instance.PlayEffect (7);
 			UpdateUI (player);
 		}
 

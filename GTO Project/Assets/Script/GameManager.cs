@@ -37,10 +37,17 @@ public class GameManager : MonoBehaviour
 	public GameObject RupeePrefab;
 	public List<GameObject> RupeeList;
 
+	public AudioClip[] audioClipMusic;
+	public AudioSource audioMusic;
+	public AudioClip[] audioClipEffects;
+	public AudioSource audioEffects;
+
+
+
 
     // Use this for initialization
     void Start () {
-
+		PlaySound (0);
 
 		GameObject SettingsObject = GameObject.FindGameObjectWithTag ("Settings");
 
@@ -214,5 +221,16 @@ public class GameManager : MonoBehaviour
 		return _playerList;
 	}
 
+	public void PlaySound(int clip){
+		audioMusic.clip = audioClipMusic [clip];
+		audioMusic.loop = true;
+		audioMusic.Play ();
+
+	}
+		
+	public void PlayEffect(int clip){
+		audioEffects.clip = audioClipEffects [clip];
+		audioEffects.PlayOneShot(audioClipEffects[clip], 0.7F);
+	}
 
 }

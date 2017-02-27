@@ -313,6 +313,7 @@ public class Player : MonoBehaviour
 			if (this.Name == "Good") {
 				if (NeighborOwner.Player.Name == "Evil" || NeighborOwner.IsShadow) {
 					Block (blockPlace, NeighborOwner);
+
 					GameManager.instance.AchievementManager.AchievementGet ("Steal as Bunny");
 				} 
 			} else if (this.Name == "Evil") {
@@ -371,6 +372,7 @@ public class Player : MonoBehaviour
 				TileSwitcher (bPlace);
 			}
 		}	
+
 	}
 
 	void TileSwitcher(Vector3 bPlace){
@@ -386,6 +388,7 @@ public class Player : MonoBehaviour
 		setLocation (GetMoveToTile ("up", this.Name), true);
 		CheckShadows();
 		uiManager.SpendBuildingPoints (this);
+		GameManager.instance.PlayEffect (1);
 	}
 
 	void SwitchTile(Tile switchTile, bool setShadow){
@@ -407,6 +410,7 @@ public class Player : MonoBehaviour
 			bool newPosShadow = GetTile (to).IsShadow;
 			if (!newPosShadow) {
 				if (this.Name == GetNeighborOwner (to).Player.Name) {
+					GameManager.instance.PlayEffect (0);
 					setLocation (to, animationIndex);
 					uiManager.SpendMovementPoints (this);
 				}
@@ -511,8 +515,11 @@ public class Player : MonoBehaviour
 				foreach (Tile item in aSeq) {
 					item.SetShadow (false);
 					ShadowBlocks.Remove (item);
+					GameManager.instance.PlayEffect (4);
 				}
+
 			}
+
 
 		}
 	}

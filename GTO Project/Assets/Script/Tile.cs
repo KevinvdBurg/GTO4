@@ -113,18 +113,23 @@ public class Tile : MonoBehaviour
 			} else if (StoneState == 4) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.GoodStoneState4;
 				this.StoneState = 4;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 3) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.GoodStoneState3;
 				this.StoneState = 3;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 2) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.GoodStoneState2;
 				this.StoneState = 2;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 1) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.GoodStoneState1;
 				this.StoneState = 1;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 0) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.GoodStoneState0;
 				this.StoneState = 0;
+				GameManager.instance.PlayEffect (6);
 				GameManager.instance.AchievementManager.AchievementGet ("Destoy Wallpiece as Deku");
 				Player.BreakStone ();
 			} else {
@@ -140,18 +145,23 @@ public class Tile : MonoBehaviour
 			} else if (StoneState == 4) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.EvilStoneState4;
 				this.StoneState = 4;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 3) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.EvilStoneState3;
 				this.StoneState = 3;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 2) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.EvilStoneState2;
 				this.StoneState = 2;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 1) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.EvilStoneState1;
 				this.StoneState = 1;
+				GameManager.instance.PlayEffect (5);
 			} else if (StoneState == 0) {
 				this.GetComponent<SpriteRenderer> ().color = GameColor.EvilStoneState0;
 				this.StoneState = 0;
+				GameManager.instance.PlayEffect (6);
 				GameManager.instance.AchievementManager.AchievementGet ("Destoy Wallpiece as Bunny");
 				Player.BreakStone ();
 			} else {

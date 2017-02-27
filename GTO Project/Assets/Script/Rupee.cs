@@ -50,6 +50,7 @@ public class Rupee : MonoBehaviour {
 	}
 
 	public int CollectRupee(){
+		GameManager.instance.PlayEffect (2);
 		this.GetComponentInParent<SpriteRenderer> ().color = GameColor.Transparent;
 		this.transform.position = new Vector3 (-100, -100, 10);
 		isActive = false;

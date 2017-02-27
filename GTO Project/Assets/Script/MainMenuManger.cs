@@ -11,9 +11,15 @@ public class MainMenuManger : MonoBehaviour {
 	public Text width;
 	public Text height;
 	public Canvas overlay;
+	public AudioClip[] audioClipMusic;
+	public AudioSource audioMusic;
+	public AudioClip[] audioClipEffects;
+	public AudioSource audioEffects;
+
 
 	// Use this for initialization
 	void Start () {
+		//audioMusic = GetComponent<AudioSource>();
 		GameObject SettingsObject = GameObject.FindGameObjectWithTag ("Settings");
 
 		if (SettingsObject != null) {
@@ -24,6 +30,7 @@ public class MainMenuManger : MonoBehaviour {
 			Debug.Log ("Cannot find Settings");
 		}
 		UpdateUI ();
+		PlaySound (0);
 	}
 	
 	// Update is called once per frame
@@ -32,15 +39,15 @@ public class MainMenuManger : MonoBehaviour {
 	}
 
 	public void ButtonStartGame(){
-		SceneManager.LoadScene ("MainScene");
+		StartCoroutine (WaitUntilSoundEvent (1));
 	}
 
 	public void ButtonOptions(GameObject optionsPanel){
-		SwitchPanel (optionsPanel);
+		StartCoroutine (WaitUntilSoundEvent (optionsPanel));
 	}
 
 	public void ButtonAbout(GameObject aboutPanel){
-		SwitchPanel (aboutPanel);
+		StartCoroutine (WaitUntilSoundEvent (aboutPanel));
 	}
 
 	public void ButtonBack(GameObject thisPanel){
@@ -68,9 +75,8 @@ public class MainMenuManger : MonoBehaviour {
 			settings.PlayfieldWidth = w;
 
 		}
+		StartCoroutine (WaitUntilSoundEvent (0));
 		UpdateUI ();
-
-
 
 	}
 
@@ -85,7 +91,12 @@ public class MainMenuManger : MonoBehaviour {
 		else {
 			settings.PlayfieldHeight = h;
 		}
+		StartCoroutine (WaitUntilSoundEvent (0));
 		UpdateUI ();
+	}
+
+	public void ChangeH(){
+	
 	}
 
 	public void UpdateUI(){
@@ -93,6 +104,48 @@ public class MainMenuManger : MonoBehaviour {
 		height.text = settings.PlayfieldHeight + "";
 	}
 		
+	public void PlaySound(int clip){
+		audioMusic.clip = audioClipMusic [clip];
+		if (clip == 0) {
+			audioMusic.Play ();
+			StartCoroutine (WaitUntilSoundIsDone (audioMusic.clip.length));
+		} else {
+			audioMusic.loop = true;
+			audioMusic.Play ();
+		}
+	}
+	public float PlayEffect(int clip){
+		audioEffects.clip = audioClipEffects [clip];
+		audioEffects.PlayOneShot(audioClipEffects[clip], 0.7F);
+		return audioEffects.clip.length;
+	}
 
+	IEnumerator WaitUntilSoundIsDone(float time){
+		yield return new WaitForSeconds(time);
+		PlaySound (1);
+	}
+
+
+	IEnumerator WaitUntilSoundEvent(GameObject panel){
+		float time = PlayEffect (0);
+		yield return new WaitForSeconds(time);
+		SwitchPanel (panel);
+	}
+
+	//1 = start game
+	IEnumerator WaitUntilSoundEvent(int action){
+		float time = 0f;
+		if (action == 1) {
+			time = PlayEffect (1);
+		}		
+		else {
+			time = PlayEffect (0);
+		}
+			
+		yield return new WaitForSeconds(time);
+		if (action == 1) {
+			SceneManager.LoadScene ("MainScene");
+		}
+	}
 
 }
